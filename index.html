@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#090b12">
+<title>今天回本了吗？基金生存挑战</title>
+<style>
+:root{
+  --bg:#090b12;--panel:#111521;--panel2:#181e2d;--line:#252c3e;
+  --text:#f6f7fb;--muted:#929bb0;--red:#ff6678;--green:#43d19e;
+  --gold:#ffd36e;--blue:#75a7ff;--purple:#b78cff;--shadow:0 18px 45px rgba(0,0,0,.32)
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",sans-serif}
+body{
+  background:
+    radial-gradient(circle at 12% -8%,rgba(116,89,255,.24),transparent 34%),
+    radial-gradient(circle at 92% 2%,rgba(255,122,96,.15),transparent 30%),
+    var(--bg)
+}
+button,input{font:inherit}
+button{cursor:pointer}
+#app{max-width:620px;margin:0 auto;padding:env(safe-area-inset-top) 14px calc(98px + env(safe-area-inset-bottom))}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 3px 12px;position:sticky;top:0;z-index:6;background:linear-gradient(var(--bg) 75%,transparent)}
+.logo{display:flex;gap:10px;align-items:center}
+.logo-mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#ffe18d,#ff8f72);color:#17100b;box-shadow:0 7px 20px rgba(255,169,102,.22)}
+.logo b{display:block;font-size:17px}
+.logo small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.day-pill{font-size:12px;color:#e5e7ef;border:1px solid var(--line);padding:8px 10px;border-radius:999px;background:rgba(17,21,33,.82)}
+.hero{border:1px solid #2b3246;background:linear-gradient(145deg,#1b2132,#10131e);border-radius:26px;padding:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(183,140,255,.13);right:-65px;top:-80px}
+.eyebrow{font-size:12px;color:var(--muted)}
+.asset-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:5px}
+.asset{font-weight:870;font-size:37px;letter-spacing:-1.5px}
+.pnl{font-size:13px;font-weight:700;padding-bottom:5px;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}
+.stat{background:rgba(8,10,16,.45);border:1px solid rgba(255,255,255,.04);border-radius:15px;padding:11px}
+.stat span{color:var(--muted);font-size:11px}
+.stat b{display:block;font-size:14px;margin-top:5px}
+.progress-wrap{margin-top:16px}
+.progress-head{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:7px}
+.progress{height:7px;background:#0b0e16;border-radius:999px;overflow:hidden}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,#ffca6a,#ff778c);border-radius:999px;width:3%}
+.event-card{margin-top:13px;border-radius:22px;padding:17px;border:1px solid #2b3348;background:linear-gradient(135deg,rgba(34,41,61,.92),rgba(19,23,35,.92));position:relative;overflow:hidden}
+.event-tag{font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--gold);margin-bottom:8px}
+.event-main{display:flex;gap:12px;align-items:flex-start}
+.event-icon{font-size:31px;width:42px;height:42px;display:grid;place-items:center;background:#0d111c;border-radius:14px}
+.event-card h3{margin:0 0 5px;font-size:16px}
+.event-card p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.55}
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:22px 3px 11px}
+.section-head h2{font-size:17px;margin:0}
+.section-head span{font-size:11px;color:var(--muted)}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:0 2px 8px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{border:1px solid var(--line);color:var(--muted);background:#10141f;padding:8px 12px;border-radius:999px;white-space:nowrap;font-size:12px}
+.filter.active{color:#17100b;background:var(--gold);border-color:transparent;font-weight:800}
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fund{border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#151a27,#10141f);padding:14px;min-height:194px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.fund:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--accent)}
+.fund-top{display:flex;justify-content:space-between;gap:7px}
+.fund-name{font-weight:790;font-size:14px;line-height:1.35}
+.fund-code{font-size:10px;color:var(--muted);margin-top:4px}
+.risk{font-size:9px;color:var(--muted);border:1px solid var(--line);padding:4px 6px;border-radius:999px;height:max-content;white-space:nowrap}
+.change{font-size:22px;font-weight:850;margin-top:14px}
+.spark{height:30px;margin-top:4px}
+.spark svg{width:100%;height:100%}
+.fund-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:auto;padding-top:9px}
+.fund-meta b{display:block;color:var(--text);font-size:12px;margin-top:2px}
+.fund button{border:0;margin-top:11px;padding:10px;border-radius:12px;background:#22293a;color:#fff;font-weight:750;font-size:12px}
+.fund button:active{transform:scale(.98)}
+.card{border:1px solid var(--line);background:linear-gradient(145deg,#151a27,#10141f);border-radius:22px;padding:16px}
+.empty{padding:28px 10px;text-align:center;color:var(--muted);font-size:13px}
+.position-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.position-row:last-child{border-bottom:0}
+.position-title{font-weight:750;font-size:13px}
+.position-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.position-value{text-align:right;font-weight:760;font-size:13px}
+.position-value small{display:block;margin-top:4px;font-size:11px}
+.insight{display:flex;gap:11px;padding:13px;border-radius:16px;background:#0d111b;margin-top:9px}
+.insight:first-child{margin-top:0}
+.insight-icon{font-size:23px}
+.insight h4{margin:0 0 4px;font-size:13px}
+.insight p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.5}
+.lesson{padding:14px;border-radius:17px;background:#0d111b;border:1px solid #202738;margin-top:10px}
+.lesson.locked{opacity:.48;filter:grayscale(.5)}
+.lesson b{font-size:13px}
+.lesson p{color:var(--muted);font-size:11.5px;line-height:1.55;margin:6px 0 0}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.badge{border:1px solid var(--line);background:#10141f;border-radius:17px;padding:13px 7px;text-align:center;min-height:103px}
+.badge.locked{opacity:.35;filter:grayscale(1)}
+.badge .emoji{font-size:26px}
+.badge b{display:block;font-size:11px;margin-top:7px}
+.badge small{display:block;color:var(--muted);font-size:9px;margin-top:4px;line-height:1.35}
+.review-card{border:1px solid #343c52;background:linear-gradient(145deg,#1b2130,#121722);border-radius:22px;padding:18px}
+.review-score{display:flex;align-items:center;justify-content:space-between}
+.review-score strong{font-size:29px}
+.review-score span{font-size:11px;color:var(--muted)}
+.review-item{display:flex;gap:10px;margin-top:14px}
+.review-item i{font-style:normal;font-size:20px}
+.review-item b{font-size:12.5px}
+.review-item p{font-size:11.5px;color:var(--muted);line-height:1.5;margin:4px 0 0}
+.primary{width:100%;border:0;border-radius:16px;padding:14px 12px;font-weight:850;background:linear-gradient(90deg,#ffd36e,#ff8f79);color:#17100b;margin-top:12px}
+.secondary{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:#111622;color:#dce0ec;margin-top:9px;font-weight:730}
+.bottom-nav{position:fixed;z-index:9;bottom:0;left:50%;transform:translateX(-50%);width:min(620px,100%);padding:10px 13px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(9,11,18,.95) 25%)}
+.nav-inner{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(19,24,36,.95);backdrop-filter:blur(18px);border:1px solid #2b3244;border-radius:22px;padding:7px;box-shadow:0 10px 30px rgba(0,0,0,.34)}
+.nav-btn{border:0;background:transparent;color:var(--muted);padding:8px 4px;border-radius:15px;font-size:10px}
+.nav-btn span{display:block;font-size:21px;margin-bottom:3px}
+.nav-btn.active{color:#17100b;background:var(--gold);font-weight:800}
+.fab{position:fixed;right:max(18px,calc((100vw - 620px)/2 + 18px));bottom:92px;width:56px;height:56px;border:0;border-radius:18px;background:linear-gradient(145deg,#ff778c,#ffb36b);font-size:23px;box-shadow:0 12px 28px rgba(255,105,126,.3);z-index:8}
+.sheet-wrap{position:fixed;inset:0;background:rgba(2,4,8,.72);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:12px}
+.sheet-wrap.show{display:flex}
+.sheet{width:min(596px,100%);max-height:88vh;overflow:auto;border:1px solid #343c50;background:#151a27;border-radius:27px;padding:19px 17px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -15px 50px rgba(0,0,0,.4)}
+.sheet-head{display:flex;justify-content:space-between;gap:12px}
+.sheet h3{margin:0;font-size:18px}
+.sheet p{color:var(--muted);font-size:12px;line-height:1.55}
+.close-x{border:0;background:#252c3c;color:#fff;width:31px;height:31px;border-radius:10px}
+.trade-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.trade-tab{border:1px solid var(--line);background:#10141f;color:var(--muted);padding:11px;border-radius:13px;font-weight:750}
+.trade-tab.active.buy{background:#40232d;color:#ff9bad;border-color:#683441}
+.trade-tab.active.sell{background:#14382e;color:#62e2ac;border-color:#235d4b}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.quick button{border:1px solid var(--line);background:#10141f;color:#fff;padding:11px 3px;border-radius:12px;font-size:11px}
+.amount-box{margin-top:13px;background:#0c1019;border-radius:16px;padding:14px}
+.amount-box label{font-size:11px;color:var(--muted)}
+.amount-box input{width:100%;margin-top:8px;background:transparent;border:0;color:#fff;font-size:26px;font-weight:800;outline:none}
+.detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.detail-stat{background:#0d111b;border-radius:14px;padding:11px}
+.detail-stat span{font-size:10px;color:var(--muted)}
+.detail-stat b{display:block;font-size:12px;margin-top:5px}
+.toast{position:fixed;top:calc(16px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-18px);padding:11px 15px;border-radius:999px;background:#f5f6fa;color:#11131b;font-size:12px;font-weight:780;opacity:0;pointer-events:none;transition:.25s;z-index:40;white-space:nowrap;max-width:88vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.overlay{position:fixed;inset:0;background:#080a10;z-index:50;display:flex;align-items:center;justify-content:center;padding:25px;text-align:center}
+.open-box{max-width:380px}
+.open-bell{font-size:58px;animation:ring .55s ease .4s 2}
+.open-box h1{font-size:27px;margin:14px 0 8px}
+.open-box p{color:var(--muted);font-size:13px;line-height:1.6}
+.open-box button{border:0;border-radius:17px;background:linear-gradient(90deg,#ffd36e,#ff8f79);font-weight:850;padding:14px 25px;margin-top:18px;color:#17100b}
+.hidden{display:none!important}
+.up{color:var(--red)}.down{color:var(--green)}.flat{color:var(--muted)}
+@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(14deg)}75%{transform:rotate(-14deg)}}
+@media(max-width:390px){.asset{font-size:33px}.fund-name{font-size:13px}.market-grid{gap:8px}.fund{padding:12px}.stats{gap:7px}}
+</style>
+</head>
+<body>
+<div class="overlay" id="welcome">
+  <div class="open-box">
+    <div class="open-bell">🔔</div>
+    <h1>今天，能回本吗？</h1>
+    <p>你有 50,000 元本金和 30 个交易日。<br>市场会整活，但每次亏损都应该留下点什么。</p>
+    <button id="startBtn">开始基金生存挑战</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark">📈</div>
+      <div><b>今天回本了吗？</b><small>基金生存挑战 · 非投资建议</small></div>
+    </div>
+    <div class="day-pill" id="dayPill">DAY 1 / 30</div>
+  </header>
+
+  <section id="tab-market" class="tab-page">
+    <div class="hero">
+      <div class="eyebrow">当前总资产</div>
+      <div class="asset-row">
+        <div class="asset" id="totalAsset">¥50,000.00</div>
+        <div class="pnl flat" id="totalPnl">+0.00%</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>可用现金</span><b id="cashValue">¥50,000</b></div>
+        <div class="stat"><span>持仓市值</span><b id="holdValue">¥0</b></div>
+        <div class="stat"><span>当前心态</span><b id="moodValue">冷静观察</b></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-head"><span>30日挑战进度</span><span id="progressText">1 / 30</span></div>
+        <div class="progress"><i id="progressBar"></i></div>
+      </div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-tag">TODAY'S MARKET</div>
+      <div class="event-main">
+        <div class="event-icon" id="eventIcon">📰</div>
+        <div><h3 id="eventTitle">盘前消息平静</h3><p id="eventDesc">没有明显消息，市场准备从你的情绪下手。</p></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>基金超市</h2><span>点基金查看详情与交易</span></div>
+    <div class="filters" id="filters"></div>
+    <div class="market-grid" id="fundGrid"></div>
+  </section>
+
+  <section id="tab-portfolio" class="tab-page hidden">
+    <div class="section-head"><h2>我的持仓</h2><span id="positionCount">0 只基金</span></div>
+    <div class="card" id="positions"></div>
+    <div class="section-head"><h2>实时诊断</h2><span>不是答案，是提醒</span></div>
+    <div class="card" id="insights"></div>
+  </section>
+
+  <section id="tab-lessons" class="tab-page hidden">
+    <div class="section-head"><h2>投资教训簿</h2><span id="lessonCount">0 / 8 已解锁</span></div>
+    <div class="review-card" id="latestReview"></div>
+    <div class="section-head"><h2>行为课程</h2><span>踩过坑后才会解锁</span></div>
+    <div id="lessonList"></div>
+  </section>
+
+  <section id="tab-achievements" class="tab-page hidden">
+    <div class="section-head"><h2>成就墙</h2><span id="badgeCount">0 / 9</span></div>
+    <div class="badges" id="badges"></div>
+    <button class="secondary" id="resetBtn">重新开始这一局</button>
+  </section>
+</div>
+
+<button class="fab" id="closeDayBtn" aria-label="收盘">🌙</button>
+
+<nav class="bottom-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" data-tab="market"><span>📊</span>市场</button>
+    <button class="nav-btn" data-tab="portfolio"><span>💼</span>持仓</button>
+    <button class="nav-btn" data-tab="lessons"><span>📒</span>复盘</button>
+    <button class="nav-btn" data-tab="achievements"><span>🏆</span>成就</button>
+  </div>
+</nav>
+
+<div class="sheet-wrap" id="tradeSheet">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div><h3 id="sheetFundName">基金名称</h3><p id="sheetFundIntro"></p></div>
+      <button class="close-x" data-close="tradeSheet">✕</button>
+    </div>
+    <div class="detail-stats">
+      <div class="detail-stat"><span>今日涨跌</span><b id="sheetChange">0.00%</b></div>
+      <div class="detail-stat"><span>最新净值</span><b id="sheetPrice">1.0000</b></div>
+      <div class="detail-stat"><span>持仓市值</span><b id="sheetHolding">¥0</b></div>
+    </div>
+    <div class="trade-tabs">
+      <button class="trade-tab buy active" data-mode="buy">买入</button>
+      <button class="trade-tab sell" data-mode="sell">卖出</button>
+    </div>
+    <div class="amount-box">
+      <label id="amountLabel">输入买入金额</label>
+      <input id="amountInput" type="number" min="0" inputmode="decimal" placeholder="1000">
+    </div>
+    <div class="quick">
+      <button data-quick="1000">¥1,000</button>
+      <button data-quick="3000">¥3,000</button>
+      <button data-quick="10000">¥10,000</button>
+      <button data-quick="all">全部</button>
+    </div>
+    <button class="primary" id="confirmTrade">确认买入</button>
+  </div>
+</div>
+
+<div class="sheet-wrap" id="reviewSheet">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div><h3>第 <span id="reviewDay">1</span> 日复盘</h3><p>市场收盘了。先别急着看赚了多少，看看今天学到了什么。</p></div>
+      <button class="close-x" data-close="reviewSheet">✕</button>
+    </div>
+    <div class="review-card" id="reviewContent"></div>
+    <button class="primary" id="nextDayBtn">记下教训，进入下一天</button>
+  </div>
+</div>
+
+<script>
+(() => {
+const INITIAL=50000, MAX_DAY=30;
+const FUND_DATA=[
+{id:'cash',name:'现金增强小确幸',code:'CASH+',cat:'稳健',risk:1,vol:.35,bias:.05,intro:'波动很小，适合暂时停泊现金。',accent:'#7fd8c5'},
+{id:'bond',name:'稳稳幸福债基',code:'BOND 01',cat:'稳健',risk:1,vol:.75,bias:.08,intro:'多数时候平静，偶尔也会让你重新认识“低风险”。',accent:'#8bb7ff'},
+{id:'dividend',name:'红利低波慢慢来',code:'DIV 88',cat:'价值',risk:2,vol:1.45,bias:.12,intro:'不追热点，靠耐心和现金流活着。',accent:'#ffd36e'},
+{id:'value',name:'被低估的老登们',code:'VALUE',cat:'价值',risk:2,vol:1.8,bias:.1,intro:'便宜不代表马上涨，但至少故事没那么贵。',accent:'#d4a373'},
+{id:'consumer',name:'快乐消费精选',code:'BUYBUY',cat:'行业',risk:3,vol:2.5,bias:.08,intro:'大家心情好时很快乐，没钱时一起沉默。',accent:'#ff9f9f'},
+{id:'medical',name:'医药回血计划',code:'MED 120',cat:'行业',risk:3,vol:3.1,bias:.1,intro:'研发、政策与情绪轮番上场。',accent:'#70d6b8'},
+{id:'gold',name:'黄金避难所',code:'GOLD',cat:'另类',risk:2,vol:1.9,bias:.08,intro:'世界越不安，它越容易被想起来。',accent:'#f4c95d'},
+{id:'overseas',name:'海外大厂观光团',code:'QDII',cat:'海外',risk:4,vol:3.8,bias:.15,intro:'除了市场波动，还顺便体验汇率与时差。',accent:'#8da0ff'},
+{id:'newenergy',name:'新能源追光者',code:'SUN 99',cat:'赛道',risk:5,vol:5.0,bias:.12,intro:'景气时满眼是光，退潮时才知道谁没穿鞋。',accent:'#6ee7b7'},
+{id:'chip',name:'半导体受害者',code:'CHIP 7NM',cat:'赛道',risk:5,vol:5.8,bias:.16,intro:'涨时相信国产替代，跌时研究下一轮周期。',accent:'#b78cff'},
+{id:'ai',name:'AI 幻觉制造机',code:'AI 404',cat:'赛道',risk:5,vol:6.6,bias:.2,intro:'想象空间很大，估值有时更大。',accent:'#ff79c6'},
+{id:'micro',name:'微盘量化盲盒',code:'MICRO',cat:'高危',risk:5,vol:8.2,bias:.1,intro:'你不知道盒子里有什么，但它每天都想给你惊喜。',accent:'#ff785a'}
+];
+const EVENTS=[
+{icon:'🤖',title:'算力概念再次发烧',desc:'AI 与芯片成为全场最响亮的故事。',impact:{ai:4.6,chip:3.7,overseas:1.0}},
+{icon:'🏦',title:'模糊利好从会议室飘出',desc:'没有人完全看懂，但大家决定先乐观半天。',all:1.4,impact:{dividend:.6,value:.5}},
+{icon:'🌊',title:'海外市场集体打喷嚏',desc:'风险偏好骤降，高波动资产先挨打。',all:-1.2,impact:{ai:-2.8,chip:-2.2,micro:-3.2,overseas:-2.4,gold:1.5}},
+{icon:'🛍️',title:'消费数据意外回暖',desc:'奶茶、旅游和购物车一起有了精神。',impact:{consumer:4.1,value:.7}},
+{icon:'💊',title:'医药政策出现转机',desc:'市场开始重新计算那些被遗忘的研发管线。',impact:{medical:4.5}},
+{icon:'⚡️',title:'新能源价格战升级',desc:'销量很好看，利润开始互相伤害。',impact:{newenergy:-4.4}},
+{icon:'🪙',title:'避险情绪升温',desc:'不确定性增加，黄金被重新抱紧。',impact:{gold:3.8,overseas:-.8,ai:-1.0}},
+{icon:'🫠',title:'午后两点半熟悉跳水',desc:'没有明确原因，但大家都说“懂的都懂”。',all:-2.3},
+{icon:'🐂',title:'神秘资金尾盘进场',desc:'指数突然直线拉升，空仓的人开始坐不住。',all:2.0,impact:{value:.8,dividend:.7}},
+{icon:'🧊',title:'市场进入无聊模式',desc:'热点熄火，成交清淡。耐心开始比判断更值钱。',all:-.2,impact:{cash:.15,bond:.3}},
+{icon:'🎲',title:'微盘风格突然失控',desc:'盲盒打开了，但没人确认里面是糖还是雷。',impact:{micro:6.5,value:-.5}},
+{icon:'📉',title:'高位热门赛道补跌',desc:'昨天还在讲信仰，今天开始讲纪律。',impact:{ai:-5.2,chip:-4.6,newenergy:-3.4}}
+];
+const LESSONS=[
+{id:'diversify',title:'不要把命运交给一只基金',text:'单一持仓过重时，判断错一次就会决定整局。分散不是保证赚钱，而是避免一次失误把你清空。'},
+{id:'cash',title:'现金不是“没参与”',text:'保留现金意味着你拥有选择权。满仓后遇到机会，只能眼睁睁看着；遇到下跌，也没有缓冲。'},
+{id:'chase',title:'别在最兴奋时忘记价格',text:'看到大涨才追进去，容易买在情绪最昂贵的时刻。故事可以是真的，价格也可能已经透支。'},
+{id:'panic',title:'下跌不自动等于卖出理由',text:'因为害怕而卖出，会让情绪替代原来的判断。先问：逻辑变了吗，还是净值只是变难看了？'},
+{id:'risk',title:'高收益叙事总附带高波动',text:'风险不是页面上的标签，而是连续下跌时你能否坚持原计划。承受不了的波动，就是不适合你的风险。'},
+{id:'rebalance',title:'上涨后也需要检查仓位',text:'赚钱的基金会自然变成更大仓位。定期再平衡，是把风险拉回原计划，而不是否定赢家。'},
+{id:'noise',title:'每条消息都交易，会被噪音牵着走',text:'新闻很多，真正改变长期价值的很少。频繁动作可能只是把焦虑变成手续费。'},
+{id:'review',title:'复盘不是责怪昨天的自己',text:'好决策也可能亏钱，坏决策也可能偶然赚钱。复盘要看过程，而不是只看结果。'}
+];
+const BADGES=[
+{id:'first',emoji:'🍼',name:'第一次下单',desc:'完成第一笔交易'},
+{id:'diverse',emoji:'🧺',name:'别把蛋放一起',desc:'同时持有4类基金'},
+{id:'cashkeeper',emoji:'🛟',name:'现金护城河',desc:'连续5日现金高于20%'},
+{id:'diamond',emoji:'💎',name:'手没有乱动',desc:'大跌日没有恐慌卖出'},
+{id:'rebound',emoji:'🩹',name:'从坑里爬出来',desc:'从-8%回到盈利'},
+{id:'profit',emoji:'💰',name:'终于回本',desc:'总收益超过5%'},
+{id:'lesson5',emoji:'📚',name:'吃一堑长五智',desc:'解锁5条教训'},
+{id:'survive',emoji:'🏁',name:'活到最后',desc:'完成30日挑战'},
+{id:'alarm',emoji:'🚓',name:'建议报警',desc:'单日亏损超过5%'}
+];
+
+let state={
+ day:1,cash:INITIAL,activeCat:'全部',selectedFund:null,tradeMode:'buy',
+ event:EVENTS[9],ordersToday:[],history:[INITIAL],cashStreak:0,hadDeepLoss:false,
+ review:null,unlockedLessons:[],unlockedBadges:[],started:false,
+ funds:FUND_DATA.map(f=>({...f,price:1,change:0,holding:0,history:[1]}))
+};
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const money=n=>'¥'+Number(n).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
+const posValue=f=>f.holding*f.price;
+const totalPos=()=>state.funds.reduce((s,f)=>s+posValue(f),0);
+const totalAsset=()=>state.cash+totalPos();
+const totalReturn=()=>((totalAsset()/INITIAL)-1)*100;
+const colorClass=n=>n>0?'up':n<0?'down':'flat';
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+
+function randomNormal(){
+ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+ return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function save(){localStorage.setItem('fund_game_v2',JSON.stringify(state))}
+function load(){
+ try{const raw=localStorage.getItem('fund_game_v2');if(raw)state=Object.assign(state,JSON.parse(raw))}catch(e){}
+}
+function toast(msg){
+ const el=$('#toast');el.textContent=msg;el.classList.add('show');
+ clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)
+}
+function mood(){
+ const r=totalReturn(), concentration=maxConcentration();
+ if(r>10)return '开始膨胀';
+ if(r>3)return '嘴角上扬';
+ if(r<-10)return '想卸载软件';
+ if(r<-4)return '假装没看';
+ if(concentration>.55)return '信仰充值';
+ return '冷静观察';
+}
+function maxConcentration(){
+ const p=totalPos(); if(!p)return 0;
+ return Math.max(...state.funds.map(f=>posValue(f)/p));
+}
+function sparkline(values,color){
+ const w=120,h=30,min=Math.min(...values),max=Math.max(...values),span=max-min||1;
+ const pts=values.map((v,i)=>`${i/(values.length-1)*w},${h-(v-min)/span*(h-4)-2}`).join(' ');
+ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+function renderHeader(){
+ $('#dayPill').textContent=`DAY ${state.day} / ${MAX_DAY}`;
+ $('#totalAsset').textContent=money(totalAsset());
+ $('#totalPnl').textContent=pct(totalReturn());
+ $('#totalPnl').className='pnl '+colorClass(totalReturn());
+ $('#cashValue').textContent=money(state.cash);
+ $('#holdValue').textContent=money(totalPos());
+ $('#moodValue').textContent=mood();
+ $('#progressText').textContent=`${state.day} / ${MAX_DAY}`;
+ $('#progressBar').style.width=`${state.day/MAX_DAY*100}%`;
+ $('#eventIcon').textContent=state.event.icon;
+ $('#eventTitle').textContent=state.event.title;
+ $('#eventDesc').textContent=state.event.desc;
+}
+function renderFilters(){
+ const cats=['全部',...new Set(state.funds.map(f=>f.cat))];
+ $('#filters').innerHTML=cats.map(c=>`<button class="filter ${state.activeCat===c?'active':''}" data-cat="${c}">${c}</button>`).join('');
+}
+function renderFunds(){
+ const list=state.funds.filter(f=>state.activeCat==='全部'||f.cat===state.activeCat);
+ $('#fundGrid').innerHTML=list.map(f=>`
+ <article class="fund" style="--accent:${f.accent}" data-fund="${f.id}">
+  <div class="fund-top">
+   <div><div class="fund-name">${f.name}</div><div class="fund-code">${f.code} · ${f.cat}</div></div>
+   <div class="risk">风险 ${'●'.repeat(f.risk)}</div>
+  </div>
+  <div class="change ${colorClass(f.change)}">${pct(f.change)}</div>
+  <div class="spark">${sparkline(f.history.slice(-12),f.accent)}</div>
+  <div class="fund-meta"><div>净值<b>${f.price.toFixed(4)}</b></div><div>持有<b>${money(posValue(f))}</b></div></div>
+  <button data-open-fund="${f.id}">查看与交易</button>
+ </article>`).join('');
+}
+function renderPositions(){
+ const held=state.funds.filter(f=>f.holding>0.0001).sort((a,b)=>posValue(b)-posValue(a));
+ $('#positionCount').textContent=`${held.length} 只基金`;
+ if(!held.length) $('#positions').innerHTML='<div class="empty">还没有持仓。空仓也是一种仓位，但总不能空到第30天吧。</div>';
+ else $('#positions').innerHTML=held.map(f=>{
+  const costGuess=f.holding?posValue(f)/(1+f.change/100):0;
+  const dayP=posValue(f)-costGuess;
+  const weight=totalPos()?posValue(f)/totalPos()*100:0;
+  return `<div class="position-row">
+   <div><div class="position-title">${f.name}</div><div class="position-sub">仓位 ${weight.toFixed(1)}% · ${f.cat}</div></div>
+   <div class="position-value">${money(posValue(f))}<small class="${colorClass(dayP)}">今日 ${dayP>=0?'+':''}${money(dayP)}</small></div>
+  </div>`;
+ }).join('');
+ renderInsights();
+}
+function renderInsights(){
+ const held=state.funds.filter(f=>f.holding>0), p=totalPos(), cashRate=state.cash/totalAsset(), max=maxConcentration();
+ const insights=[];
+ if(!held.length) insights.push(['🫙','你现在是空仓','没有波动，也没有参与。先从看得懂的基金开始，小额试错比一次梭哈更适合学习。']);
+ else{
+  if(max>.5){
+   const f=held.sort((a,b)=>posValue(b)-posValue(a))[0];
+   insights.push(['⚠️','单一持仓过重',`${f.name} 占持仓 ${(max*100).toFixed(0)}%。它一次大跌就可能主导整天心情。`]);
+  }else insights.push(['🧺','集中度暂时可控','没有一只基金完全绑架组合，但仍要留意不同基金是否其实押注同一类风险。']);
+  if(cashRate<.08)insights.push(['🪫','现金快见底了',`现金只剩 ${(cashRate*100).toFixed(1)}%。遇到机会和下跌时，你的选择都会变少。`]);
+  else if(cashRate>.55)insights.push(['🧊','现金很多，很安全',`现金占 ${(cashRate*100).toFixed(0)}%。安全感很足，但也可能错过挑战目标。`]);
+  else insights.push(['🛟','现金比例尚可',`现金占 ${(cashRate*100).toFixed(0)}%，组合还留有调整空间。`]);
+  const risk=held.reduce((s,f)=>s+f.risk*posValue(f),0)/(p||1);
+  if(risk>4)insights.push(['🎢','组合波动会很刺激',`加权风险约 ${risk.toFixed(1)}/5。连续回撤时，别让“我扛得住”只停留在上涨日。`]);
+ }
+ $('#insights').innerHTML=insights.map(x=>`<div class="insight"><div class="insight-icon">${x[0]}</div><div><h4>${x[1]}</h4><p>${x[2]}</p></div></div>`).join('');
+}
+function renderLessons(){
+ $('#lessonCount').textContent=`${state.unlockedLessons.length} / ${LESSONS.length} 已解锁`;
+ $('#lessonList').innerHTML=LESSONS.map(l=>{
+  const open=state.unlockedLessons.includes(l.id);
+  return `<div class="lesson ${open?'':'locked'}"><b>${open?'📌':'🔒'} ${l.title}</b><p>${open?l.text:'完成相应行为或踩到相应的坑后解锁。'}</p></div>`;
+ }).join('');
+ const r=state.review;
+ $('#latestReview').innerHTML=r?reviewHTML(r):'<div class="empty">今天还没有收盘。每个交易日结束后，这里会留下复盘记录。</div>';
+}
+function renderBadges(){
+ $('#badgeCount').textContent=`${state.unlockedBadges.length} / ${BADGES.length}`;
+ $('#badges').innerHTML=BADGES.map(b=>{
+  const open=state.unlockedBadges.includes(b.id);
+  return `<div class="badge ${open?'':'locked'}"><div class="emoji">${b.emoji}</div><b>${b.name}</b><small>${b.desc}</small></div>`;
+ }).join('');
+}
+function renderAll(){renderHeader();renderFilters();renderFunds();renderPositions();renderLessons();renderBadges();save()}
+
+function unlockLesson(id){
+ if(!state.unlockedLessons.includes(id)){state.unlockedLessons.push(id);toast('解锁教训：'+LESSONS.find(x=>x.id===id).title)}
+}
+function unlockBadge(id){
+ if(!state.unlockedBadges.includes(id)){state.unlockedBadges.push(id);toast('获得成就：'+BADGES.find(x=>x.id===id).name)}
+}
+function evaluateUnlocks(){
+ const held=state.funds.filter(f=>f.holding>0);
+ if(held.length>=4 && new Set(held.map(f=>f.cat)).size>=4)unlockBadge('diverse');
+ if(totalReturn()>=5)unlockBadge('profit');
+ if(state.unlockedLessons.length>=5)unlockBadge('lesson5');
+ if(state.day>=MAX_DAY)unlockBadge('survive');
+ if(state.cash/totalAsset()>.2)state.cashStreak++;else state.cashStreak=0;
+ if(state.cashStreak>=5)unlockBadge('cashkeeper');
+ if(totalReturn()<=-8)state.hadDeepLoss=true;
+ if(state.hadDeepLoss && totalReturn()>0)unlockBadge('rebound');
+}
+function openTrade(id){
+ const f=state.funds.find(x=>x.id===id); state.selectedFund=id;
+ $('#sheetFundName').textContent=f.name;
+ $('#sheetFundIntro').textContent=f.intro;
+ $('#sheetChange').textContent=pct(f.change);$('#sheetChange').className=colorClass(f.change);
+ $('#sheetPrice').textContent=f.price.toFixed(4);
+ $('#sheetHolding').textContent=money(posValue(f));
+ $('#amountInput').value='';
+ setTradeMode('buy');
+ $('#tradeSheet').classList.add('show');
+}
+function setTradeMode(mode){
+ state.tradeMode=mode;
+ $$('.trade-tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+ $('#amountLabel').textContent=mode==='buy'?'输入买入金额':'输入卖出市值';
+ $('#confirmTrade').textContent=mode==='buy'?'确认买入':'确认卖出';
+}
+function quickAmount(v){
+ const f=state.funds.find(x=>x.id===state.selectedFund);
+ $('#amountInput').value=v==='all'?(state.tradeMode==='buy'?Math.floor(state.cash):Math.floor(posValue(f))):v;
+}
+function confirmTrade(){
+ const f=state.funds.find(x=>x.id===state.selectedFund);
+ let amount=Number($('#amountInput').value);
+ if(!amount||amount<=0){toast('先填一个有效金额');return}
+ if(state.tradeMode==='buy'){
+  if(amount>state.cash+0.001){toast('现金不够，别透支信仰');return}
+  f.holding+=amount/f.price;state.cash-=amount;
+  state.ordersToday.push({type:'buy',id:f.id,amount,afterChange:f.change});
+  if(f.change>4)unlockLesson('chase');
+  unlockBadge('first');
+  toast('买入成功');
+ }else{
+  const value=posValue(f);
+  if(value<=0){toast('你还没有持有这只基金');return}
+  amount=Math.min(amount,value);
+  f.holding-=amount/f.price;state.cash+=amount;
+  state.ordersToday.push({type:'sell',id:f.id,amount,afterChange:f.change});
+  if(f.change<-3.5)unlockLesson('panic');
+  toast('卖出成功');
+ }
+ if(maxConcentration()>.62)unlockLesson('diversify');
+ if(state.cash/totalAsset()<.05)unlockLesson('cash');
+ $('#tradeSheet').classList.remove('show');renderAll();
+}
+function buildReview(before,after,worstChange){
+ const dayRet=(after/before-1)*100;
+ let score=78;
+ const notes=[];
+ if(maxConcentration()>.55){score-=15;notes.push(['⚠️','仓位集中','一只基金占比过高，让组合风险被单一判断绑架。'])}
+ else notes.push(['🧺','集中度','仓位没有过度集中，组合的容错率更高。']);
+ if(state.cash/after<.08){score-=12;notes.push(['🪫','现金管理','现金太少，下一次遇到机会或回撤时会被动。'])}
+ else notes.push(['🛟','现金管理','仍保留一定现金，你还有调整和等待的权利。']);
+ const chase=state.ordersToday.some(o=>o.type==='buy'&&o.afterChange>4);
+ const panic=state.ordersToday.some(o=>o.type==='sell'&&o.afterChange<-3.5);
+ if(chase){score-=10;notes.push(['🔥','追涨行为','你在明显上涨后买入。先分清“看好”和“害怕错过”。']);unlockLesson('chase')}
+ if(panic){score-=10;notes.push(['😵','恐慌行为','你在明显下跌时卖出。卖出可以正确，但理由不该只是难受。']);unlockLesson('panic')}
+ if(!state.ordersToday.length){score+=5;notes.push(['🧘','没有强行操作','今天没有为了缓解焦虑而交易。少做也是一种决策。']);unlockLesson('noise')}
+ if(worstChange<-5 && !panic){unlockBadge('diamond')}
+ if(dayRet<-5)unlockBadge('alarm');
+ if(maxConcentration()>.55)unlockLesson('diversify');
+ if(state.cash/after<.08)unlockLesson('cash');
+ const risk=state.funds.reduce((s,f)=>s+f.risk*posValue(f),0)/(totalPos()||1);
+ if(risk>4.1)unlockLesson('risk');
+ if(state.day>=4)unlockLesson('review');
+ score=clamp(score,35,100);
+ return {day:state.day,dayRet,score,notes,event:state.event.title,asset:after};
+}
+function reviewHTML(r){
+ return `<div class="review-score"><div><span>今日决策评分</span><strong>${r.score}</strong></div><div style="text-align:right"><span>当日收益</span><strong class="${colorClass(r.dayRet)}" style="font-size:19px">${pct(r.dayRet)}</strong></div></div>
+ ${r.notes.map(n=>`<div class="review-item"><i>${n[0]}</i><div><b>${n[1]}</b><p>${n[2]}</p></div></div>`).join('')}`;
+}
+function closeDay(){
+ if(state.day>MAX_DAY){toast('这一局已经结束了');return}
+ const before=totalAsset();
+ let worst=0;
+ state.funds.forEach(f=>{
+  let c=f.bias+randomNormal()*f.vol;
+  if(state.event.all)c+=state.event.all;
+  if(state.event.impact&&state.event.impact[f.id])c+=state.event.impact[f.id];
+  if(f.id==='cash')c=clamp(c,-.3,.45);
+  else c=clamp(c,-12.5,13.5);
+  f.change=c;f.price=Math.max(.12,f.price*(1+c/100));f.history.push(f.price);
+  if(f.history.length>40)f.history.shift();
+  worst=Math.min(worst,c);
+ });
+ const after=totalAsset();
+ state.history.push(after);
+ state.review=buildReview(before,after,worst);
+ evaluateUnlocks();
+ $('#reviewDay').textContent=state.day;
+ $('#reviewContent').innerHTML=reviewHTML(state.review);
+ $('#reviewSheet').classList.add('show');
+ renderAll();
+}
+function nextDay(){
+ $('#reviewSheet').classList.remove('show');
+ if(state.day>=MAX_DAY){
+  unlockBadge('survive');renderAll();switchTab('achievements');
+  toast(totalReturn()>=0?'挑战完成：你活着回来了':'挑战完成：学费已经交了');
+  return;
+ }
+ state.day++;state.ordersToday=[];
+ state.event=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+ renderAll();switchTab('market');
+}
+function switchTab(tab){
+ $$('.tab-page').forEach(x=>x.classList.add('hidden'));
+ $('#tab-'+tab).classList.remove('hidden');
+ $$('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));
+ $('#closeDayBtn').classList.toggle('hidden',tab!=='market');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function reset(){
+ if(!confirm('真的重新开始吗？这一局的持仓和教训记录会清空。'))return;
+ localStorage.removeItem('fund_game_v2');location.reload();
+}
+
+document.addEventListener('click',e=>{
+ const cat=e.target.closest('[data-cat]');if(cat){state.activeCat=cat.dataset.cat;renderFilters();renderFunds()}
+ const open=e.target.closest('[data-open-fund]');if(open)openTrade(open.dataset.openFund);
+ const nav=e.target.closest('.nav-btn');if(nav)switchTab(nav.dataset.tab);
+ const mode=e.target.closest('[data-mode]');if(mode)setTradeMode(mode.dataset.mode);
+ const q=e.target.closest('[data-quick]');if(q)quickAmount(q.dataset.quick);
+ const close=e.target.closest('[data-close]');if(close)$('#'+close.dataset.close).classList.remove('show');
+});
+$('#confirmTrade').addEventListener('click',confirmTrade);
+$('#closeDayBtn').addEventListener('click',closeDay);
+$('#nextDayBtn').addEventListener('click',nextDay);
+$('#resetBtn').addEventListener('click',reset);
+$('#startBtn').addEventListener('click',()=>{
+ state.started=true;$('#welcome').classList.add('hidden');save();toast('开盘啦，老板');
+});
+$$('.sheet-wrap').forEach(w=>w.addEventListener('click',e=>{if(e.target===w)w.classList.remove('show')}));
+load();
+if(state.started)$('#welcome').classList.add('hidden');
+renderAll();
+})();
+</script>
+</body>
+</html>
