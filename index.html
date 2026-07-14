@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#090b12" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>今天回本了吗？V5 真实基金模拟器</title>
+<title>今天回本了吗？V6 沉浸式基金模拟器</title>
 <style>
 :root{
   --bg:#080b12;--panel:#111624;--panel2:#171e2f;--panel3:#0d111c;
@@ -14,12 +14,19 @@
   --gold:#ffd36f;--blue:#78a9ff;--purple:#b98cff;--orange:#ff9a73;
   --shadow:0 20px 50px rgba(0,0,0,.34);--radius:22px;
 }
+html[data-theme="light"]{
+  --bg:#f3f6fb;--panel:#ffffff;--panel2:#eef2f9;--panel3:#f7f9fd;--line:#dce3ef;
+  --text:#172039;--muted:#7c879c;--shadow:0 18px 45px rgba(60,76,110,.12);
+}
+html[data-theme="light"] body{background:radial-gradient(circle at 10% -10%,rgba(124,90,255,.12),transparent 36%),radial-gradient(circle at 92% 2%,rgba(255,121,92,.10),transparent 31%),var(--bg)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",sans-serif}
 body{background:radial-gradient(circle at 10% -10%,rgba(124,90,255,.24),transparent 36%),radial-gradient(circle at 92% 2%,rgba(255,121,92,.16),transparent 31%),var(--bg)}
 button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}.up{color:var(--red)!important}.down{color:var(--green)!important}.flat{color:var(--muted)!important}
 .app{max-width:660px;margin:0 auto;padding:env(safe-area-inset-top) 14px calc(88px + env(safe-area-inset-bottom))}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:10;padding:14px 2px 12px;background:linear-gradient(var(--bg) 72%,transparent)}
+.top-actions{display:flex;align-items:center;gap:7px}.theme-toggle{width:38px;height:38px;border-radius:13px;border:1px solid var(--line);background:rgba(17,22,36,.88);color:var(--text);font-size:17px}.theme-toggle:active{transform:scale(.96)}
+html[data-theme="light"] .theme-toggle,html[data-theme="light"] .clock-pill{background:rgba(255,255,255,.9)}
 .brand{display:flex;gap:10px;align-items:center;min-width:0}.brand-icon{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#ffe28c,#ff8d75);color:#17100b;box-shadow:0 8px 22px rgba(255,164,107,.22)}
 .brand b{display:block;font-size:16px;white-space:nowrap}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.clock-pill{border:1px solid var(--line);background:rgba(17,22,36,.88);color:var(--text);border-radius:16px;padding:8px 11px;text-align:right}.clock-pill span{display:block;font-size:9px;color:var(--muted)}.clock-pill b{font-size:14px}
 .page{animation:fade .2s ease}.bottom-nav{position:fixed;z-index:20;left:50%;bottom:0;transform:translateX(-50%);width:min(660px,100%);padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(8,11,18,.97) 25%)}
@@ -42,6 +49,11 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
 .empty-state{text-align:center;color:var(--muted);font-size:12px;padding:30px 10px}.divider{height:1px;background:var(--line);margin:13px 0}.hint{font-size:10px;color:var(--muted);line-height:1.55}.warning{color:#ffb36f}.progress-line{height:7px;background:#0b101b;border-radius:999px;overflow:hidden;margin-top:9px}.progress-line i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ffd36f,#ff8c76)}
 .modal-wrap{position:fixed;inset:0;background:rgba(1,3,7,.74);z-index:50;display:none;align-items:flex-end;justify-content:center;padding:12px}.modal-wrap.show{display:flex}.modal{width:min(636px,100%);max-height:90vh;overflow:auto;border:1px solid #36405a;background:#151b29;border-radius:27px;padding:18px 17px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -18px 55px rgba(0,0,0,.46)}.modal-head{display:flex;justify-content:space-between;gap:12px}.modal h2{font-size:18px;margin:0}.modal p{font-size:11.5px;color:var(--muted);line-height:1.55}.close{border:0;background:#252d40;color:#fff;width:32px;height:32px;border-radius:10px}.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:13px}.tabs button{border:1px solid var(--line);background:#0d121d;color:var(--muted);padding:10px;border-radius:12px;font-size:11px;font-weight:750}.tabs button.active{background:var(--gold);color:#17100b}.amount-box{background:#0b101a;border-radius:16px;padding:13px;margin-top:12px}.amount-box label{font-size:9px;color:var(--muted)}.amount-box input{width:100%;border:0;background:transparent;color:#fff;outline:none;font-size:25px;font-weight:850;margin-top:7px}.quick-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px}.quick-amounts button{border:1px solid var(--line);background:#0d121d;color:#fff;border-radius:11px;padding:10px 3px;font-size:9px}.primary{width:100%;border:0;border-radius:15px;padding:13px;background:linear-gradient(90deg,#ffd36f,#ff9277);color:#17100b;font-weight:900;margin-top:12px}.primary.big{font-size:15px;padding:15px}.secondary{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:#0f1420;color:#dce1ed;margin-top:8px;font-weight:780}.share-select{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.share-option{border:1px solid var(--line);background:#0d121d;border-radius:15px;padding:12px}.share-option.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}.share-option b{font-size:12px}.share-option p{font-size:9px;margin:5px 0 0}.range{width:100%;margin-top:11px}.detail-chart{height:115px;background:#0b101a;border-radius:15px;margin-top:12px;padding:9px}.detail-chart svg{width:100%;height:100%}.timeline{margin-top:12px}.timeline-item{display:grid;grid-template-columns:17px 1fr;gap:9px;padding-bottom:12px}.timeline-item i{width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:3px;box-shadow:0 0 0 4px rgba(255,211,111,.1)}.timeline-item b{font-size:10px}.timeline-item p{margin:3px 0 0;font-size:9px}
 .boot{position:fixed;inset:0;background:radial-gradient(circle at 50% 28%,rgba(110,84,255,.2),transparent 30%),#070910;z-index:100;display:grid;place-items:center;padding:24px;text-align:center}.boot-card{max-width:420px}.bell{border:0;background:transparent;font-size:57px;animation:ring .6s ease .5s 2}.boot-kicker{font-size:9px;color:var(--gold);letter-spacing:1.5px;margin-top:9px}.boot h1{font-size:28px;margin:11px 0 8px}.boot p{font-size:12px;color:var(--muted);line-height:1.65}.boot-note{font-size:9px;color:#6f788d;line-height:1.5;margin-top:14px}.toast{position:fixed;z-index:120;top:calc(15px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-18px);background:#f5f6fa;color:#11131a;border-radius:999px;padding:10px 14px;font-size:11px;font-weight:830;opacity:0;pointer-events:none;transition:.25s;max-width:88vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.home-mission{margin-bottom:13px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(255,211,111,.13),rgba(185,140,255,.10));border-radius:24px;padding:18px;overflow:hidden;position:relative}.home-mission:after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;right:-55px;top:-65px;background:rgba(255,255,255,.05)}.mission-kicker{font-size:9px;font-weight:900;letter-spacing:1.1px;color:var(--gold)}.mission-title{font-size:27px;font-weight:950;line-height:1.18;margin-top:8px;letter-spacing:-.7px;max-width:92%}.mission-sub{font-size:11px;color:var(--muted);line-height:1.55;margin-top:9px}.mission-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.mission-pills span{font-size:9px;border:1px solid var(--line);background:var(--panel3);padding:6px 8px;border-radius:999px}.number-roll{font-variant-numeric:tabular-nums;display:inline-block}.number-pop{animation:numberPop .36s ease}.learn-chip{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border:1px solid var(--line);border-radius:50%;background:var(--panel3);color:var(--blue);font-size:10px;margin-left:4px;vertical-align:middle}.beginner-note{margin-top:10px;padding:11px;border-radius:14px;background:rgba(120,169,255,.09);border:1px dashed rgba(120,169,255,.38);font-size:10px;color:var(--muted);line-height:1.55}.fee-plan{margin-top:11px;padding:12px;border-radius:15px;background:var(--panel3);border:1px solid var(--line)}.fee-plan-head{display:flex;justify-content:space-between;font-size:10px}.fee-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.fee-box{border:1px solid var(--line);border-radius:13px;padding:10px;background:var(--panel)}.fee-box.best{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}.fee-box b{font-size:11px}.fee-box strong{display:block;font-size:15px;margin-top:5px}.fee-box small{display:block;color:var(--muted);font-size:8.5px;margin-top:4px;line-height:1.35}.fee-ladder{margin-top:10px;display:flex;flex-direction:column;gap:6px}.fee-ladder-row{display:flex;justify-content:space-between;gap:10px;font-size:9.5px;color:var(--muted);padding:7px 8px;background:var(--panel3);border-radius:10px}.fee-ladder-row.active{color:var(--text);outline:1px solid var(--gold)}
+.cat-fab{position:fixed;z-index:25;right:max(18px,calc((100vw - 660px)/2 + 18px));bottom:100px;width:62px;height:62px;border:1px solid rgba(255,255,255,.18);border-radius:21px;background:linear-gradient(145deg,#ffe5a6,#ff9c82);box-shadow:0 12px 30px rgba(255,145,111,.28);display:grid;place-items:center;padding:0}.cat-face{font-size:34px;animation:catFloat 2.8s ease-in-out infinite}.cat-dot{position:absolute;right:-2px;top:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:9px;display:grid;place-items:center;font-weight:900}.cat-tip{display:flex;gap:11px;align-items:flex-start}.cat-avatar{font-size:42px;flex:0 0 auto}.cat-bubble{background:var(--panel3);border:1px solid var(--line);padding:12px;border-radius:5px 16px 16px 16px;font-size:11px;line-height:1.65;color:var(--text)}.cat-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.cat-actions button{border:1px solid var(--line);background:var(--panel3);color:var(--text);border-radius:12px;padding:10px;font-size:10px}
+.feedback{position:fixed;inset:0;z-index:130;background:rgba(3,5,10,.72);display:none;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(8px)}.feedback.show{display:flex}.feedback-card{width:min(390px,100%);border:1px solid #3b455e;background:linear-gradient(145deg,#1c2435,#101521);border-radius:29px;padding:25px 20px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.48);animation:feedbackIn .42s cubic-bezier(.2,.9,.2,1)}html[data-theme="light"] .feedback-card{background:linear-gradient(145deg,#fff,#f3f6fb)}.feedback-icon{font-size:55px}.feedback-title{font-size:24px;font-weight:950;margin-top:9px}.feedback-lines{margin-top:13px;color:var(--muted);font-size:12px;line-height:1.8}.feedback-lines b{color:var(--gold);font-size:16px}.feedback-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti{position:absolute;top:-10%;font-size:19px;animation:confettiFall 1.5s linear forwards}.experience{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}.experience button{border:1px solid #2e3850;background:#111724;color:#aeb7ca;border-radius:15px;padding:11px 4px;font-size:10px}.experience button.active{background:var(--gold);color:#17100b;border-color:transparent;font-weight:900}.experience button span{display:block;font-size:22px;margin-bottom:4px}.coach-toggle{display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--panel3);border-radius:13px;margin-top:10px;font-size:10px}.coach-toggle input{accent-color:var(--gold)}
+@keyframes numberPop{0%{transform:translateY(5px);opacity:.4}100%{transform:none;opacity:1}}@keyframes feedbackIn{from{opacity:0;transform:scale(.82) translateY(16px)}to{opacity:1;transform:none}}@keyframes confettiFall{to{transform:translateY(115vh) rotate(540deg);opacity:.2}}@keyframes catFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
 @keyframes fade{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(13deg)}75%{transform:rotate(-13deg)}}
 @media(max-width:390px){.asset{font-size:32px}.hero{padding:17px}.holding-grid{gap:6px}.hcell{padding:8px 6px}.achievement-grid{gap:6px}.achievement{padding:10px 4px}.day-cell{min-height:54px}.day-val{font-size:9px}}
 
@@ -51,22 +63,24 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
 <div id="boot" class="boot">
   <div class="boot-card">
     <button class="bell" id="bellBtn" aria-label="开盘铃">🔔</button>
-    <div class="boot-kicker">FUND LIFE SIMULATOR · V5</div>
+    <div class="boot-kicker">FUND LIFE SIMULATOR · V6</div>
     <h1>今天，能回本吗？</h1>
     <p>一套按照真实基金交易逻辑运转的模拟世界。<br>新闻会骗人，费用会偷吃收益，三点以后又是明天。</p>
+    <div class="experience" id="experiencePick"><button data-experience="new" class="active"><span>🌱</span>完全不会</button><button data-experience="some"><span>🙂</span>知道一点</button><button data-experience="pro"><span>😎</span>老基民</button></div>
     <button class="primary big" id="startBtn">进入基金世界</button>
     <div class="boot-note">模拟规则仅用于游戏教学，不构成投资建议；不同真实基金的确认日与费率以产品文件为准。</div>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
+<div id="feedback" class="feedback" aria-hidden="true"><div class="feedback-confetti" id="feedbackConfetti"></div><div class="feedback-card"><div class="feedback-icon" id="feedbackIcon">✨</div><div class="feedback-title" id="feedbackTitle">操作成功</div><div class="feedback-lines" id="feedbackLines"></div><button class="primary" id="feedbackClose">好，我知道了</button></div></div>
 <div id="app" class="app hidden">
   <header class="topbar">
     <div class="brand" id="brandEaster">
       <div class="brand-icon">📈</div>
-      <div><b>今天回本了吗？</b><small>真实基金模拟器 · V5</small></div>
+      <div><b>今天回本了吗？</b><small>沉浸式基金模拟器 · V6</small></div>
     </div>
-    <button class="clock-pill" id="clockBtn"><span id="dayLabel">DAY 1</span><b id="timeLabel">09:30</b></button>
+    <div class="top-actions"><button class="theme-toggle" id="themeBtn" aria-label="切换日夜模式">🌙</button><button class="clock-pill" id="clockBtn"><span id="dayLabel">DAY 1</span><b id="timeLabel">09:30</b></button></div>
   </header>
 
   <main>
@@ -79,6 +93,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
     <section class="page hidden" id="page-achievements"></section>
   </main>
 
+  <button class="cat-fab" id="catBtn" aria-label="基金猫"><span class="cat-face">🐱</span><span class="cat-dot" id="catDot">1</span></button>
   <nav class="bottom-nav">
     <button data-nav="home" class="active"><span>🏠</span>首页</button>
     <button data-nav="market"><span>🛒</span>基金</button>
@@ -96,8 +111,9 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
 (() => {
 'use strict';
 
-const VERSION = '5.0.0';
-const STORAGE_KEY = 'fund_simulator_v5';
+const VERSION = '6.0.0';
+const STORAGE_KEY = 'fund_simulator_v6';
+const LEGACY_STORAGE_KEY = 'fund_simulator_v5';
 const INITIAL_CASH = 50000;
 const MAX_DAYS = 30;
 const TIME_STAGES = ['09:30','11:30','14:50','15:00','20:00'];
@@ -191,6 +207,19 @@ function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCod
 function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 function normal(rand){let u=0,v=0;while(!u)u=rand();while(!v)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 
+function buildFeeRules(f,variantKey){
+  const purchase=f.risk<=2?0.0006:f.risk===3?0.0010:0.0012;
+  const service=f.risk<=2?0.0025:f.risk===3?0.0040:0.0060;
+  const aMid=variantKey==='focus'?0.0075:variantKey==='quality'?0.0050:0.0025;
+  const aLong=f.sector==='海外'?0.0050:(f.risk>=4?0.0050:0.0025);
+  const cMid=variantKey==='focus'||f.risk>=4?0.0050:0.0025;
+  const cExtra=f.sector==='海外'?[{lt:90,rate:0.0025,label:'30天≤持有＜90天'}]:[];
+  return {
+    A:{purchase,service:0,redemption:[{lt:7,rate:.015,label:'持有不足7天'},{lt:30,rate:aMid,label:'7天≤持有＜30天'},{lt:180,rate:aLong,label:'30天≤持有＜180天'},{lt:365,rate:.0025,label:'180天≤持有＜365天'},{lt:Infinity,rate:0,label:'持有满365天'}]},
+    C:{purchase:0,service,redemption:[{lt:7,rate:.015,label:'持有不足7天'},{lt:30,rate:cMid,label:'7天≤持有＜30天'},...cExtra,{lt:Infinity,rate:0,label:cExtra.length?'持有满90天':'持有满30天'}]}
+  };
+}
+
 function makeFunds(){
   const funds=[]; let code=100001;
   Object.entries(SECTORS).forEach(([sector,sd],si)=>{
@@ -202,14 +231,14 @@ function makeFunds(){
         id:`${sector}-${v.key}`,name:`${prefix}${v.label}`,code:String(code++).padStart(6,'0'),sector,
         risk,accent:sd.color,icon:sd.icon,vol:sd.vol*(0.84+v.concentration*0.38),cashRatio:v.cash,
         concentration:v.concentration,alpha:v.alpha+(si%3-1)*0.015,manager:MANAGERS[(si*4+vi)%MANAGERS.length],
-        desc:v.desc,holdings:sd.stocks.map((name,i)=>({name,weight:weights[i]})),
+        desc:v.desc,feeRules:null,holdings:sd.stocks.map((name,i)=>({name,weight:weights[i]})),
         valuation:clamp(sd.valuation+(vi-1.5)*6,5,95),turnover:[18,9,5,22][vi],
         navA:round(0.88+(hash(sector+v.key)%6200)/10000),navC:round(0.88+(hash(sector+v.key)%6200)/10000),
         change:0,estimate:0,historyA:[],historyC:[],maxDrawdown:0,drawdownDays:0
       });
     });
   });
-  funds.forEach(f=>{f.historyA=[f.navA];f.historyC=[f.navC]});
+  funds.forEach(f=>{f.historyA=[f.navA];f.historyC=[f.navC];const variant=f.id.split('-').at(-1);f.feeRules=buildFeeRules(f,variant)});
   return funds;
 }
 
@@ -227,16 +256,29 @@ function initialState(){
     watchlist:[],achievements:[],cancelCount:0,noTradeDays:0,cashStreak:0,brandClicks:0,bellClicks:0,
     realizedPnL:0,activeSector:'全部',calendarMode:'amount',calendarMonth:dates[0].slice(0,7),
     stats:{orders:0,shortFeePaid:0,totalFees:0,panicSells:0,profitSells:0},
-    currentPage:'home',lastAction:'',ending:null
+    currentPage:'home',lastAction:'',ending:null,theme:'dark',experience:'new',beginnerMode:true,catSeen:0
   };
 }
 let state=initialState();
 
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function migrateState(saved){
+  const fresh=initialState();
+  const merged={...fresh,...saved,version:VERSION,theme:saved.theme||'dark',experience:saved.experience||'new',beginnerMode:saved.beginnerMode??true,catSeen:saved.catSeen||0};
+  const newFunds=makeFunds();
+  merged.funds=newFunds.map(n=>{const old=(saved.funds||[]).find(x=>x.id===n.id);return old?{...n,...old,feeRules:n.feeRules}:n});
+  merged.stats={...fresh.stats,...(saved.stats||{})};
+  return merged;
+}
 function load(){
-  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);if(s.version===VERSION)state=s}}catch(e){console.warn(e)}
+  try{const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem(LEGACY_STORAGE_KEY);if(raw)state=migrateState(JSON.parse(raw))}catch(e){console.warn(e)}
+  applyTheme();
 }
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1900)}
+function applyTheme(){document.documentElement.dataset.theme=state.theme||'dark';const b=$('#themeBtn');if(b)b.textContent=state.theme==='light'?'☀️':'🌙'}
+function toggleTheme(){state.theme=state.theme==='light'?'dark':'light';applyTheme();save()}
+function showFeedback(icon,title,lines,confetti=true){const box=$('#feedback');$('#feedbackIcon').textContent=icon;$('#feedbackTitle').textContent=title;$('#feedbackLines').innerHTML=lines.map((x,i)=>i===0?`<b>${x}</b>`:x).join('<br>');const layer=$('#feedbackConfetti');layer.innerHTML='';if(confetti){const bits=['✨','🎉','⭐','💫','📈'];for(let i=0;i<18;i++){const el=document.createElement('span');el.className='confetti';el.textContent=bits[i%bits.length];el.style.left=(Math.random()*100)+'%';el.style.animationDelay=(Math.random()*.45)+'s';el.style.animationDuration=(1.1+Math.random()*.8)+'s';layer.appendChild(el)}}box.classList.add('show');box.setAttribute('aria-hidden','false');try{navigator.vibrate?.(35)}catch(e){}}
+function closeFeedback(){$('#feedback').classList.remove('show');$('#feedback').setAttribute('aria-hidden','true')}
 function dateObj(str){return new Date(str+'T12:00:00')}
 function dateLabel(str){const d=dateObj(str);return `${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`}
 function currentDate(){return state.dates[state.day]}
@@ -262,13 +304,12 @@ function totalAsset(){return state.cash+holdingsValue()+pendingAsset()}
 function totalReturn(){return (totalAsset()/INITIAL_CASH-1)*100}
 function cashRatio(){return state.cash/Math.max(totalAsset(),1)}
 function mood(){const r=totalReturn();if(r>10)return'开始膨胀';if(r>3)return'嘴角上扬';if(r<-12)return'想卸载软件';if(r<-5)return'假装没看';if(cashRatio()<.05)return'满仓祈祷';return'冷静观察'}
-function feeConfig(f,shareClass){
-  const aFee = f.risk<=2?0.0006:f.risk===3?0.0010:0.0012;
-  const service = f.risk<=2?0.0025:f.risk===3?0.0040:0.0060;
-  return {purchase:shareClass==='A'?aFee:0,service:shareClass==='C'?service:0};
-}
+function feeConfig(f,shareClass){return f.feeRules?.[shareClass]||buildFeeRules(f,f.id.split('-').at(-1))[shareClass]}
 function holdingDays(h,atDay=state.day){return Math.max(0,atDay-h.confirmDay+1)}
-function redemptionRate(days,f){if(days<7)return .015;if(days<30)return f.risk>=4?.005:.0025;if(days<180)return .001;return 0}
+function redemptionStep(days,f,shareClass){const rules=feeConfig(f,shareClass).redemption;return rules.find(x=>days<x.lt)||rules.at(-1)}
+function redemptionRate(days,f,shareClass='A'){return redemptionStep(days,f,shareClass).rate}
+function estimatedClassCost(f,shareClass,amount,days){const cfg=feeConfig(f,shareClass);const purchase=amount*cfg.purchase;const service=amount*cfg.service*days/365;const redemption=amount*redemptionRate(days,f,shareClass);return {purchase,service,redemption,total:purchase+service+redemption}}
+function feeLadderHTML(f,shareClass,days){return feeConfig(f,shareClass).redemption.map(x=>`<div class="fee-ladder-row ${days<x.lt&&redemptionStep(days,f,shareClass)===x?'active':''}"><span>${x.label}</span><b>${(x.rate*100).toFixed(2)}%</b></div>`).join('')}
 function settlementDays(f){if(f.sector==='海外')return 3;if(f.sector==='稳健')return 1;return 2}
 function orderCanCancel(o){return o.status==='submitted'&&(state.day<o.effectiveDay||(state.day===o.effectiveDay&&state.stage<3))}
 function effectiveDayForNewOrder(){return state.stage<3?state.day:state.day+1}
@@ -310,17 +351,20 @@ function estimateForFund(f){
 function updateEstimates(){state.funds.forEach(f=>f.estimate=estimateForFund(f))}
 
 function processMorning(){
+  let confirmedCount=0,settledCount=0;
   state.orders.forEach(o=>{
     if(o.type==='buy'&&o.status==='priced'&&o.confirmDay<=state.day){
       const key=holdingKey(o.fundId,o.shareClass);let h=state.holdings[key];
       if(!h){h={fundId:o.fundId,shareClass:o.shareClass,units:0,costAmount:0,confirmDay:state.day,lots:[],realized:0};state.holdings[key]=h}
       h.units+=o.units;h.costAmount+=o.amount;h.confirmDay=Math.min(h.confirmDay,state.day);h.lots.push({units:o.units,cost:o.amount,confirmDay:state.day});
-      o.status='confirmed';o.confirmedAt=`${currentDate()} 09:30`;
+      o.status='confirmed';o.confirmedAt=`${currentDate()} 09:30`;confirmedCount++;
     }
     if(o.type==='sell'&&(o.status==='priced'||o.status==='settling')&&o.settlementDay<=state.day){
-      state.cash+=o.proceeds;o.status='settled';o.settledAt=`${currentDate()} 09:30`;
+      state.cash+=o.proceeds;o.status='settled';o.settledAt=`${currentDate()} 09:30`;settledCount++;
     }
   });
+  if(confirmedCount)setTimeout(()=>showFeedback('🎉','份额确认成功',[`持仓 +${confirmedCount}`,'昨天的订单，今天正式住进账户。']),180);
+  else if(settledCount)setTimeout(()=>showFeedback('💰','赎回到账',[`${settledCount} 笔资金已回到现金`,'基金猫：先别急着把它再花出去。']),180);
 }
 
 function processClose(){
@@ -343,7 +387,7 @@ function processClose(){
       o.fee=fee;o.price=nav;o.units=net/nav;o.status='priced';o.confirmDay=state.day+1;o.pricedAt=`${currentDate()} 15:00`;
       state.stats.totalFees+=fee;
     }else{
-      const h=getHolding(o.fundId,o.shareClass);const days=holdingDays(h,state.day);const rate=redemptionRate(days,f);const gross=o.units*nav;const fee=gross*rate;const proceeds=gross-fee;
+      const h=getHolding(o.fundId,o.shareClass);const days=holdingDays(h,state.day);const rate=redemptionRate(days,f,o.shareClass);const gross=o.units*nav;const fee=gross*rate;const proceeds=gross-fee;
       const unitRatio=o.units/Math.max(h.units,1e-9);const costAllocated=h.costAmount*unitRatio;
       h.units-=o.units;h.costAmount-=costAllocated;h.realized+=(proceeds-costAllocated);
       if(h.units<1e-7)delete state.holdings[holdingKey(o.fundId,o.shareClass)];
@@ -392,7 +436,7 @@ function submitBuy(fid,shareClass,amount){
   const o={id:'O'+Date.now()+Math.random().toString(36).slice(2,6),type:'buy',fundId:fid,shareClass,amount,status:'submitted',createdDay:state.day,createdAt:`${currentDate()} ${currentTime()}`,effectiveDay:eff};
   state.orders.unshift(o);state.stats.orders++;state.lastAction='buy';unlock('first_order');
   if(state.stage>=3)unlock('three_o_one');if(Math.round(amount)===617)unlock('six_seventeen');
-  detectAC(fid);closeModal();renderAll();save();toast(state.stage<3?'买入订单已提交，可在15:00前撤单':'已预约下一交易日受理');
+  detectAC(fid);closeModal();renderAll();save();showFeedback('✨','买入申请成功！',[state.stage<3?'待确认订单 +1':'预约订单 +1',state.stage<3?'15:00 前可以撤单。':'将在下一交易日受理。','愿市场善待你。']);
 }
 
 function submitSell(fid,shareClass,ratio){
@@ -402,7 +446,7 @@ function submitSell(fid,shareClass,ratio){
   const o={id:'O'+Date.now()+Math.random().toString(36).slice(2,6),type:'sell',fundId:fid,shareClass,units,ratio,amount:units*classNav(f,shareClass),status:'submitted',createdDay:state.day,createdAt:`${currentDate()} ${currentTime()}`,effectiveDay:eff};
   state.orders.unshift(o);state.stats.orders++;state.lastAction='sell';unlock('first_order');if(state.stage>=3)unlock('three_o_one');
   const pnlRate=(holdingValue(h)/h.costAmount-1)*100;if(ratio>.98&&Math.abs(pnlRate)<=.5)unlock('break_even_sell');
-  closeModal();renderAll();save();toast(state.stage<3?'赎回订单已提交，可在15:00前撤单':'已预约下一交易日赎回');
+  closeModal();renderAll();save();showFeedback('🪽','赎回申请成功！',[state.stage<3?'待处理订单 +1':'预约赎回 +1',state.stage<3?'15:00 前仍可以撤单。':'将在下一交易日受理。','基金猫：希望不是卖飞。'],false);
 }
 
 function cancelOrder(id){
@@ -460,25 +504,42 @@ function buildEnding(){
   return {type,emoji,text,asset:totalAsset(),return:totalReturn(),fees:state.stats.totalFees,achievements:state.achievements.length};
 }
 
-function renderAll(){renderHeader();renderHome();renderMarket();renderHoldings();renderCalendar();renderOrders();renderNews();renderAchievements();setPage(state.currentPage,false);save()}
+const numberMemory={};
+function formatAnimated(v,fmt){if(fmt==='money')return fmtMoney(v);if(fmt==='pct')return fmtPct(v);if(fmt==='plain')return Number(v).toLocaleString('zh-CN',{maximumFractionDigits:2});return String(v)}
+function animateNumbers(root=document){$$('[data-roll]',root).forEach(el=>{const key=el.dataset.roll,value=Number(el.dataset.value||0),fmt=el.dataset.format||'plain',from=Number(numberMemory[key]??value);numberMemory[key]=value;if(Math.abs(value-from)<.0001){el.textContent=formatAnimated(value,fmt);return}const start=performance.now(),dur=620;const tick=now=>{const p=Math.min(1,(now-start)/dur),ease=1-Math.pow(1-p,3),cur=from+(value-from)*ease;el.textContent=formatAnimated(cur,fmt);if(p<1)requestAnimationFrame(tick);else el.classList.add('number-pop')};requestAnimationFrame(tick)})}
+function renderAll(){renderHeader();renderHome();renderMarket();renderHoldings();renderCalendar();renderOrders();renderNews();renderAchievements();setPage(state.currentPage,false);animateNumbers();save()}
 function renderHeader(){
-  $('#dayLabel').textContent=`DAY ${state.day+1} · ${dateLabel(currentDate())}`;$('#timeLabel').textContent=currentTime();
+  $('#dayLabel').textContent=`DAY ${state.day+1} · ${dateLabel(currentDate())}`;$('#timeLabel').textContent=currentTime();applyTheme();
   const active=state.orders.some(o=>orderCanCancel(o)||['priced','settling'].includes(o.status));$('#orderDot').classList.toggle('show',active);
+}
+function minutesToClose(){return [330,210,10,0,0][state.stage]||0}
+function homeMission(){
+  if(state.stage>=3)return {title:'🌙 今日已收盘。你学到了什么？',sub:'查看盈亏日历和订单结果，别只盯着赚了多少钱。'};
+  const sorted=Object.entries(state.currentMarket.sectorReturns||{}).sort((a,b)=>a[1]-b[1]);const worst=sorted[0],best=sorted.at(-1);
+  if(worst&&worst[1]<-2.3)return {title:`🤡 今天${worst[0]}大跌，你准备怎么办？`,sub:'先分清逻辑变化和情绪波动，再决定要不要动。'};
+  if(best&&best[1]>2.8)return {title:`🔥 ${best[0]}今天很热，你要追吗？`,sub:'看见上涨之后，先看看估值、拥挤度和自己的仓位。'};
+  const m=minutesToClose();return {title:`📢 距离收盘还有 ${Math.floor(m/60)}小时${m%60?m%60+'分钟':''}`,sub:'15:00 前的订单按今日净值定价，也可以在截止前撤销。'};
+}
+function catMessage(){
+  const r=totalReturn();if(state.stage===2)return '只剩十分钟啦。下单前再看一眼：你买的是逻辑，还是怕错过？';if(state.stage>=3)return '收盘了。今天的结果不等于今天的决策质量。';if(r<-5)return '今天有点疼，但先别把“难受”当作卖出理由。';if(cashRatio()<.08)return '现金快被你花光了。留一点选择权，也算一种仓位。';if(!allHoldings().length)return '第一次买可以小一点。学规则，不需要先交一大笔学费。';return '我负责提醒，你负责决定。市场可不会替我们负责。';
 }
 function renderHome(){
   const market=state.currentMarket;const news=market.news;const date=currentDate();
   const watch=state.watchlist.map(fundById).filter(Boolean).slice(0,5);const top=[...state.funds].sort((a,b)=>b.estimate-a.estimate).slice(0,4);
+  const mission=homeMission();
   $('#page-home').innerHTML=`
+    <div class="home-mission"><div class="mission-kicker">TODAY'S MISSION</div><div class="mission-title">${mission.title}</div><div class="mission-sub">${mission.sub}</div><div class="mission-pills"><span>${dateLabel(date)}</span><span>${STAGE_LABELS[state.stage]}</span><span>${news.sentiment}</span></div></div>
     <div class="hero">
       <div class="eyebrow">账户总资产 · ${dateLabel(date)}</div>
-      <div class="hero-row"><div class="asset">${fmtMoney(totalAsset())}</div><div class="return ${cls(totalReturn())}">${fmtPct(totalReturn())}</div></div>
-      <div class="hero-stats"><div class="mini"><span>可用现金</span><b>${fmtMoney(state.cash)}</b></div><div class="mini"><span>持仓市值</span><b>${fmtMoney(holdingsValue())}</b></div><div class="mini"><span>当前心态</span><b>${mood()}</b></div></div>
+      <div class="hero-row"><div class="asset number-roll" data-roll="totalAsset" data-value="${totalAsset()}" data-format="money">${fmtMoney(totalAsset())}</div><div class="return ${cls(totalReturn())} number-roll" data-roll="totalReturn" data-value="${totalReturn()}" data-format="pct">${fmtPct(totalReturn())}</div></div>
+      <div class="hero-stats"><div class="mini"><span>可用现金</span><b class="number-roll" data-roll="cash" data-value="${state.cash}" data-format="money">${fmtMoney(state.cash)}</b></div><div class="mini"><span>持仓市值</span><b class="number-roll" data-roll="holdingsValue" data-value="${holdingsValue()}" data-format="money">${fmtMoney(holdingsValue())}</b></div><div class="mini"><span>当前心态</span><b>${mood()}</b></div></div>
       <div class="market-clock"><div class="clock-orb">${state.stage<3?'🕒':'🌙'}</div><div><h3>${STAGE_LABELS[state.stage]}</h3><p>${clockHint()}</p></div><button class="advance" data-action="advance">${advanceLabel()}</button></div>
     </div>
     <div class="news-card" data-action="open-news"><div class="news-top"><div class="tag">TODAY'S MARKET</div><div class="sentiment">${news.sentiment}</div></div><h3>${news.icon} ${news.title}</h3><p>${news.text}</p><div class="impact-pills">${Object.entries(news.impact||{}).slice(0,4).map(([k,v])=>`<span>${k} ${v>0?'偏利好':'偏利空'}</span>`).join('')||'<span>全市场情绪事件</span>'}</div></div>
-    <div class="quick-actions"><button data-page="news"><span>📰</span>新闻中心</button><button data-page="achievements"><span>🏆</span>成就彩蛋</button><button data-action="show-trades"><span>🧾</span>交易记录</button><button data-action="reset-game"><span>🧹</span>重新开局</button></div>
+    <div class="quick-actions"><button data-page="news"><span>📰</span>新闻中心</button><button data-page="achievements"><span>🏆</span>成就彩蛋</button><button data-action="show-trades"><span>🧾</span>交易记录</button><button data-action="learn"><span>🌱</span>基金入门</button></div>
     <div class="section-head"><h2>${watch.length?'我的自选':'盘中热度'}</h2><button data-page="market">查看全部 →</button></div>
     <div class="fund-list">${(watch.length?watch:top).map(fundRowHTML).join('')}</div>
+    <div class="section-head"><h2>基金猫提醒</h2><span>${state.beginnerMode?'新手讲解已开启':'轻触猫猫查看更多'}</span></div><div class="card cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div>
     <div class="section-head"><h2>今日提示</h2><span>不是投资建议</span></div>
     <div class="card"><div class="hint">${dailyLesson()}</div><div class="progress-line"><i style="width:${(state.day+1)/MAX_DAYS*100}%"></i></div><div class="hint" style="margin-top:8px">30日挑战：${state.day+1} / ${MAX_DAYS}</div></div>`;
 }
@@ -490,7 +551,7 @@ function clockHint(){
 }
 function advanceLabel(){return state.stage===4?(state.day>=MAX_DAYS-1?'查看结局':'下一交易日'):state.stage===2?'推进到15:00':state.stage===3?'更新净值':'推进时间'}
 function dailyLesson(){
-  const arr=['同一板块的不同基金，也会因为持仓、现金仓位和集中度而涨跌不同。','15:00 是场外基金订单归属交易日的重要分界线。','A类常见前端申购费，C类常见按日计提销售服务费；游戏费率为模拟值。','消息利好不等于价格上涨，预期可能已经提前被交易。','真正的分散不是多买几个名字，而是减少同一风险来源。'];return arr[state.day%arr.length];
+  const arr=['同一板块的不同基金，也会因为持仓、现金仓位和集中度而涨跌不同。','15:00 是场外基金订单归属交易日的重要分界线。','A/C 类不只看字母：申购费、销售服务费和持有期限赎回费阶梯要一起算。','消息利好不等于价格上涨，预期可能已经提前被交易。','真正的分散不是多买几个名字，而是减少同一风险来源。'];return arr[state.day%arr.length];
 }
 function fundRowHTML(f){const est=estimateForFund(f);return `<div class="fund-row" style="--accent:${f.accent}" data-fund="${f.id}"><div><div class="fund-name">${f.icon} ${f.name}</div><div class="fund-sub">${f.code} · ${f.sector} · ${f.manager} · 风险${f.risk}/5</div></div><div class="fund-right"><div class="fund-change ${cls(est)}">${fmtPct(est)}</div><div class="fund-est">${state.currentMarket.closed?'最终净值':'盘中估算'} · ${f.navA.toFixed(4)} <button class="watch" data-watch="${f.id}">${state.watchlist.includes(f.id)?'★':'☆'}</button></div></div></div>`}
 function renderMarket(){
@@ -503,9 +564,10 @@ function renderHoldings(){
   const hs=allHoldings().sort((a,b)=>holdingValue(b)-holdingValue(a));
   $('#page-holdings').innerHTML=`<div class="section-head"><h2>我的持有</h2><span>${hs.length} 个份额类别</span></div>${hs.length?hs.map(holdingHTML).join(''):'<div class="card empty-state">还没有确认持仓。买入订单会在收盘定价、下一交易日确认。</div>'}<div class="section-head"><h2>组合诊断</h2><span>实时</span></div><div class="card">${portfolioInsights()}</div>`;
 }
+function nextFeeHint(days,f,shareClass){const rules=feeConfig(f,shareClass).redemption;const current=redemptionStep(days,f,shareClass);const index=rules.indexOf(current);const next=rules[index+1];if(!next)return '已经处于最低费率档。';const threshold=Number.isFinite(current.lt)?current.lt:null;return threshold?`再持有 ${Math.max(0,threshold-days)} 天，费率可能降至 ${(next.rate*100).toFixed(2)}%。`:'已经处于最低费率档。'}
 function holdingHTML(h){
   const f=fundById(h.fundId),val=holdingValue(h),pnl=val-h.costAmount,rate=h.costAmount?pnl/h.costAmount*100:0,dayPnl=val*(f.change/100)/(1+f.change/100),days=holdingDays(h),avail=availableUnits(h);
-  return `<div class="holding"><div class="holding-top"><div><div class="holding-title">${f.icon} ${f.name}<span class="class-chip">${h.shareClass}类</span></div><div class="holding-code">${f.code} · ${f.sector} · 持有${days}天</div></div><div class="holding-pnl"><b class="${cls(pnl)}">${pnl>=0?'+':''}${fmtMoney(pnl)}</b><small class="${cls(rate)}">${fmtPct(rate)}</small></div></div><div class="holding-grid"><div class="hcell"><span>持有市值</span><b>${fmtMoney(val)}</b></div><div class="hcell"><span>持仓成本</span><b>${fmtMoney(h.costAmount)}</b></div><div class="hcell"><span>当日收益</span><b class="${cls(dayPnl)}">${dayPnl>=0?'+':''}${fmtMoney(dayPnl)}</b></div><div class="hcell"><span>成本净值</span><b>${(h.costAmount/h.units).toFixed(4)}</b></div><div class="hcell"><span>当前净值</span><b>${classNav(f,h.shareClass).toFixed(4)}</b></div><div class="hcell"><span>可卖份额</span><b>${avail.toFixed(2)}</b></div></div><div class="holding-actions"><button class="buy-btn" data-fund="${f.id}" data-mode="buy">继续买入</button><button class="sell-btn" data-fund="${f.id}" data-mode="sell" data-class="${h.shareClass}">快捷卖出</button></div></div>`;
+  return `<div class="holding"><div class="holding-top"><div><div class="holding-title">${f.icon} ${f.name}<span class="class-chip">${h.shareClass}类</span></div><div class="holding-code">${f.code} · ${f.sector} · 持有${days}天</div></div><div class="holding-pnl"><b class="${cls(pnl)} number-roll" data-roll="holding-${h.fundId}-${h.shareClass}-pnl" data-value="${pnl}" data-format="money">${pnl>=0?'+':''}${fmtMoney(pnl)}</b><small class="${cls(rate)}">${fmtPct(rate)}</small></div></div><div class="holding-grid"><div class="hcell"><span>持有市值</span><b>${fmtMoney(val)}</b></div><div class="hcell"><span>持仓成本</span><b>${fmtMoney(h.costAmount)}</b></div><div class="hcell"><span>当日收益</span><b class="${cls(dayPnl)}">${dayPnl>=0?'+':''}${fmtMoney(dayPnl)}</b></div><div class="hcell"><span>成本净值</span><b>${(h.costAmount/h.units).toFixed(4)}</b></div><div class="hcell"><span>当前净值</span><b>${classNav(f,h.shareClass).toFixed(4)}</b></div><div class="hcell"><span>可卖份额</span><b>${avail.toFixed(2)}</b></div></div><div class="beginner-note">🐱 当前赎回费 ${(redemptionRate(days,f,h.shareClass)*100).toFixed(2)}%；${nextFeeHint(days,f,h.shareClass)}</div><div class="holding-actions"><button class="buy-btn" data-fund="${f.id}" data-mode="buy">继续买入</button><button class="sell-btn" data-fund="${f.id}" data-mode="sell" data-class="${h.shareClass}">快捷卖出</button></div></div>`;
 }
 function portfolioInsights(){
   const hs=allHoldings();if(!hs.length)return '<div class="hint">先从看得懂的基金开始，小额试错比一次梭哈更适合学习。</div>';
@@ -540,7 +602,7 @@ function openFund(fid,mode='buy',preferredClass='A'){
   const f=fundById(fid);const nav=classNav(f,preferredClass),dd=maxDrawdown(f.historyA);const est=estimateForFund(f);const aFee=feeConfig(f,'A'),cFee=feeConfig(f,'C');
   openModal(`<div class="modal-head"><div><h2>${f.icon} ${f.name}</h2><p>${f.code} · ${f.sector} · ${f.manager}<br>${f.desc}</p></div><button class="close" data-close>✕</button></div>
   <div class="detail-chart">${chartSvg(f.historyA,f.accent)}</div>
-  <div class="metric-row" style="margin-top:10px"><div class="metric"><span>${state.currentMarket.closed?'今日涨跌':'盘中估算'}</span><b class="${cls(est)}">${fmtPct(est)}</b></div><div class="metric"><span>最大回撤</span><b class="down">${fmtPct(dd.mdd)}</b></div><div class="metric"><span>估值百分位</span><b>${f.valuation.toFixed(0)}%</b></div><div class="metric"><span>现金仓位</span><b>${(f.cashRatio*100).toFixed(0)}%</b></div></div>
+  <div class="metric-row" style="margin-top:10px"><div class="metric"><span>${state.currentMarket.closed?'今日涨跌':'盘中估算'}${state.beginnerMode?'<button class="learn-chip" data-term="estimate">?</button>':''}</span><b class="${cls(est)}">${fmtPct(est)}</b></div><div class="metric"><span>最大回撤${state.beginnerMode?'<button class="learn-chip" data-term="drawdown">?</button>':''}</span><b class="down">${fmtPct(dd.mdd)}</b></div><div class="metric"><span>估值百分位${state.beginnerMode?'<button class="learn-chip" data-term="valuation">?</button>':''}</span><b>${f.valuation.toFixed(0)}%</b></div><div class="metric"><span>现金仓位</span><b>${(f.cashRatio*100).toFixed(0)}%</b></div></div>
   <div class="valuation"><span class="hint">历史估值</span><div class="thermo"><i style="left:${f.valuation}%"></i></div><b>${f.valuation<30?'偏低':f.valuation>75?'偏高':'中性'}</b></div>
   <div class="divider"></div><div class="hint">前四大模拟持仓：${f.holdings.map(x=>`${x.name} ${(x.weight*100).toFixed(0)}%`).join(' · ')}</div>
   <div class="tabs"><button class="${mode==='buy'?'active':''}" data-trade-mode="buy">买入</button><button class="${mode==='sell'?'active':''}" data-trade-mode="sell">卖出</button></div>
@@ -549,13 +611,17 @@ function openFund(fid,mode='buy',preferredClass='A'){
 function renderTradePane(fid,mode,preferredClass='A'){
   const f=fundById(fid),pane=$('#tradePane');if(!pane)return;
   if(mode==='buy'){
-    const a=feeConfig(f,'A'),c=feeConfig(f,'C');pane.innerHTML=`<div class="share-select"><button class="share-option ${preferredClass==='A'?'active':''}" data-share="A"><b>A 类</b><p>申购费 ${(a.purchase*100).toFixed(2)}%，无销售服务费</p></button><button class="share-option ${preferredClass==='C'?'active':''}" data-share="C"><b>C 类</b><p>0申购费，销售服务费 ${(c.service*100).toFixed(2)}%/年</p></button></div><div class="amount-box"><label>买入金额 · 可用 ${fmtMoney(state.cash)}</label><input id="tradeAmount" type="number" inputmode="decimal" placeholder="1000" /></div><div class="quick-amounts"><button data-amount="1000">¥1,000</button><button data-amount="3000">¥3,000</button><button data-amount="10000">¥10,000</button><button data-amount="all">全部</button></div><div class="hint warning" id="tradeHint" style="margin-top:10px">${tradeTimingText('buy')}</div><button class="primary" data-submit-buy="${fid}" data-class="${preferredClass}">提交买入订单</button>`;
+    const a=feeConfig(f,'A'),c=feeConfig(f,'C');pane.innerHTML=`<div class="share-select"><button class="share-option ${preferredClass==='A'?'active':''}" data-share="A"><b>A 类</b><p>申购费 ${(a.purchase*100).toFixed(2)}%，无销售服务费</p></button><button class="share-option ${preferredClass==='C'?'active':''}" data-share="C"><b>C 类</b><p>0申购费，销售服务费 ${(c.service*100).toFixed(2)}%/年</p></button></div><div class="amount-box"><label>买入金额 · 可用 ${fmtMoney(state.cash)}</label><input id="tradeAmount" type="number" inputmode="decimal" placeholder="1000" value="1000" /></div><div class="quick-amounts"><button data-amount="1000">¥1,000</button><button data-amount="3000">¥3,000</button><button data-amount="10000">¥10,000</button><button data-amount="all">全部</button></div><div class="fee-plan"><div class="fee-plan-head"><span>预计持有时间</span><b><span id="planDaysLabel">20</span> 天</b></div><input class="range" id="planDays" type="range" min="1" max="365" value="20"/><div id="feeCompare"></div></div>${state.beginnerMode?'<div class="beginner-note">🐱 A/C 类的投资方向相同，差别主要在费用。别只看申购费，还要看计划持有多久以及这只基金自己的赎回费阶梯。</div>':''}<div class="hint warning" id="tradeHint" style="margin-top:10px">${tradeTimingText('buy')}</div><button class="primary" data-submit-buy="${fid}" data-class="${preferredClass}">提交买入订单</button>`;setTimeout(()=>updateFeeCompare(fid),0);
   }else{
     const holdings=['A','C'].map(c=>getHolding(fid,c)).filter(Boolean);if(!holdings.length){pane.innerHTML='<div class="empty-state">没有已确认持仓，暂时不能卖出。</div>';return}
-    let c=holdings.some(h=>h.shareClass===preferredClass)?preferredClass:holdings[0].shareClass;const h=getHolding(fid,c),avail=availableUnits(h),days=holdingDays(h),rate=redemptionRate(days,f);
-    pane.innerHTML=`<div class="share-select">${holdings.map(x=>`<button class="share-option ${x.shareClass===c?'active':''}" data-sell-class="${x.shareClass}"><b>${x.shareClass} 类持仓</b><p>${x.units.toFixed(2)}份 · 持有${holdingDays(x)}天</p></button>`).join('')}</div><div class="amount-box"><label>卖出比例 <b id="sellPct">50%</b></label><input class="range" id="sellRange" type="range" min="1" max="100" value="50"/><div class="hint" id="sellPreview">预计卖出 ${(avail*.5).toFixed(2)} 份，短期赎回费率 ${(rate*100).toFixed(2)}%</div></div><div class="quick-amounts"><button data-sell-ratio="25">25%</button><button data-sell-ratio="50">50%</button><button data-sell-ratio="75">75%</button><button data-sell-ratio="100">全部</button></div><div class="hint warning" style="margin-top:10px">${tradeTimingText('sell')}</div><button class="primary" data-submit-sell="${fid}" data-class="${c}">提交赎回订单</button>`;
+    let c=holdings.some(h=>h.shareClass===preferredClass)?preferredClass:holdings[0].shareClass;const h=getHolding(fid,c),avail=availableUnits(h),days=holdingDays(h),rate=redemptionRate(days,f,c);
+    pane.innerHTML=`<div class="share-select">${holdings.map(x=>`<button class="share-option ${x.shareClass===c?'active':''}" data-sell-class="${x.shareClass}"><b>${x.shareClass} 类持仓</b><p>${x.units.toFixed(2)}份 · 持有${holdingDays(x)}天</p></button>`).join('')}</div><div class="amount-box"><label>卖出比例 <b id="sellPct">50%</b></label><input class="range" id="sellRange" type="range" min="1" max="100" value="50"/><div class="hint" id="sellPreview">预计卖出 ${(avail*.5).toFixed(2)} 份，短期赎回费率 ${(rate*100).toFixed(2)}%</div></div><div class="quick-amounts"><button data-sell-ratio="25">25%</button><button data-sell-ratio="50">50%</button><button data-sell-ratio="75">75%</button><button data-sell-ratio="100">全部</button></div><div class="fee-plan"><div class="fee-plan-head"><span>${c}类赎回费阶梯</span><b>当前 ${(rate*100).toFixed(2)}%</b></div><div class="fee-ladder">${feeLadderHTML(f,c,days)}</div></div><div class="hint warning" style="margin-top:10px">${tradeTimingText('sell')}</div><button class="primary" data-submit-sell="${fid}" data-class="${c}">提交赎回订单</button>`;
   }
 }
+function updateFeeCompare(fid){const f=fundById(fid),amount=Number($('#tradeAmount')?.value||1000),days=Number($('#planDays')?.value||20),box=$('#feeCompare');if(!box)return;$('#planDaysLabel').textContent=days;const a=estimatedClassCost(f,'A',amount,days),c=estimatedClassCost(f,'C',amount,days),best=a.total<=c.total?'A':'C';box.innerHTML=`<div class="fee-compare"><div class="fee-box ${best==='A'?'best':''}"><b>A 类预计总费用</b><strong>${fmtMoney(a.total)}</strong><small>申购 ${fmtMoney(a.purchase)} · 服务 ${fmtMoney(a.service)} · 赎回 ${fmtMoney(a.redemption)}</small></div><div class="fee-box ${best==='C'?'best':''}"><b>C 类预计总费用</b><strong>${fmtMoney(c.total)}</strong><small>申购 ${fmtMoney(c.purchase)} · 服务 ${fmtMoney(c.service)} · 赎回 ${fmtMoney(c.redemption)}</small></div></div><div class="hint" style="margin-top:8px">🐱 按当前金额和持有计划，${best} 类预计少花 ${fmtMoney(Math.abs(a.total-c.total))}。这只是模拟估算，真正下单要看具体产品费率表。</div>`}
+function openLearning(term){const terms={estimate:['盘中估算','根据板块和模拟持仓推算的实时涨跌，不是最终净值。15:00 后才揭晓。'],drawdown:['最大回撤','历史高点到后来最低点，曾经最多跌了多少。它是在问：最难熬的时候有多难熬？'],valuation:['估值百分位','当前估值在自身模拟历史中所处的位置。80%表示比过去大约80%的时候更贵，但不代表马上会跌。'],ac:['A/C 类','投资方向通常相同，费用收法不同。A常见申购费，C常见销售服务费；两类还可能有不同的赎回费阶梯。'],t1:['T+1 与15:00','15:00前提交，通常按当天收盘净值定价；15:00后顺延到下一交易日。份额确认和资金到账还需要时间。']};const [title,text]=terms[term]||['基金猫课堂','慢慢玩，规则会一点点认识。'];openModal(`<div class="modal-head"><div><h2>🐱 ${title}</h2><p>基金猫的一句话翻译</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${text}</div></div>`)}
+function openCat(){state.catSeen++;$('#catDot').textContent=Math.max(0,3-state.catSeen);$('#catDot').style.display=state.catSeen>=3?'none':'grid';openModal(`<div class="modal-head"><div><h2>🐱 基金猫</h2><p>不替你做决定，只负责在你上头时挠一下。</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div><div class="coach-toggle"><span>新手讲解模式</span><input type="checkbox" id="coachToggle" ${state.beginnerMode?'checked':''}></div><div class="cat-actions"><button data-term="ac">A/C类怎么选</button><button data-term="t1">三点和T+1</button><button data-term="drawdown">什么是回撤</button><button data-action="learn">打开入门课</button></div>`,()=>save())}
+function openLearningCenter(){openModal(`<div class="modal-head"><div><h2>🌱 基金入门</h2><p>不会也没关系，先记住五件事。</p></div><button class="close" data-close>✕</button></div><div class="lesson"><b>1. 基金买入不会立刻出现份额</b><p>订单先提交，收盘按净值定价，之后再确认。</p></div><div class="lesson"><b>2. 15:00 是重要分界线</b><p>三点前通常属于今天，三点后通常顺延到下一交易日。</p></div><div class="lesson"><b>3. A/C 类主要差在费用</b><p>结合申购费、销售服务费、赎回费阶梯和持有时间一起算。</p></div><div class="lesson"><b>4. 涨得多的基金也可能更难拿住</b><p>收益和波动是一对绑定出售的东西。</p></div><div class="lesson"><b>5. 新闻利好不保证上涨</b><p>价格可能早已反映预期，资金也可能借利好兑现。</p></div>`)}
 function tradeTimingText(type){const eff=effectiveDayForNewOrder(),f=state.dates[eff];if(state.stage<3)return `当前 ${currentTime()}：订单按今日收盘净值定价，15:00 前可撤单。`;return `当前已过 15:00：订单将于 ${f?dateLabel(f):'下一交易日'} 受理，在该日 15:00 前仍可撤单。`}
 function openRecord(day){const r=state.records.find(x=>x.day===day);if(!r)return;const top=fundById(r.top.id),worst=fundById(r.worst.id);openModal(`<div class="modal-head"><div><h2>${dateLabel(r.date)} 复盘</h2><p>${r.news}</p></div><button class="close" data-close>✕</button></div><div class="metric-row"><div class="metric"><span>当日收益</span><b class="${cls(r.pnl)}">${fmtMoney(r.pnl)}</b></div><div class="metric"><span>收益率</span><b class="${cls(r.rate)}">${fmtPct(r.rate)}</b></div><div class="metric"><span>最强基金</span><b>${top.name}</b></div><div class="metric"><span>最弱基金</span><b>${worst.name}</b></div></div><div class="divider"></div><div class="hint">当日订单：${r.orders.length?r.orders.map(o=>`${o.type==='buy'?'买入':'卖出'} ${fundById(o.fundId).name}${o.shareClass}`).join('；'):'没有交易。少做也可能是好决策。'}</div>`)}
 function openAchievement(id){const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;const open=state.achievements.includes(id);openModal(`<div class="modal-head"><div><h2>${open?a.emoji:'🔒'} ${open?a.name:(a.hidden?'隐藏成就':a.name)}</h2><p>${open?'已经解锁':'还没有解锁'}</p></div><button class="close" data-close>✕</button></div><div class="card"><div class="hint"><b>解锁条件</b><br>${open||!a.hidden?a.condition:'条件暂时保密，彩蛋要自己撞见才好玩。'}</div><div class="divider"></div><div class="hint"><b>当前进度</b><br>${achievementProgress(a)}</div>${open?`<div class="divider"></div><div class="hint"><b>系统吐槽</b><br>${a.roast}</div><div class="divider"></div><div class="hint"><b>留下的教训</b><br>${a.lesson}</div>`:''}</div>`)}
@@ -564,11 +630,16 @@ function openEnding(){const e=state.ending;openModal(`<div style="text-align:cen
 function openModal(html,after){$('#modal').innerHTML=html;$('#modalWrap').classList.add('show');$('#modalWrap').setAttribute('aria-hidden','false');after?.()}
 function closeModal(){$('#modalWrap').classList.remove('show');$('#modalWrap').setAttribute('aria-hidden','true')}
 function setPage(page,scroll=true){state.currentPage=page;$$('.page').forEach(p=>p.classList.add('hidden'));$(`#page-${page}`).classList.remove('hidden');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===page));if(scroll)window.scrollTo({top:0,behavior:'smooth'});save()}
-function resetGame(){if(!confirm('重新开始会清空 V5 的持仓、订单和成就，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
+function resetGame(){if(!confirm('重新开始会清空 V6 的持仓、订单和成就，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
 
 function bindEvents(){
   document.addEventListener('click',e=>{
+    const exp=e.target.closest('[data-experience]');if(exp){state.experience=exp.dataset.experience;state.beginnerMode=state.experience==='new';$$('[data-experience]').forEach(x=>x.classList.toggle('active',x===exp));return}
     const nav=e.target.closest('[data-nav]');if(nav)return setPage(nav.dataset.nav);
+    if(e.target.closest('#themeBtn'))return toggleTheme();
+    if(e.target.closest('#catBtn'))return openCat();
+    const term=e.target.closest('[data-term]');if(term)return openLearning(term.dataset.term);
+    if(e.target.closest('[data-action="learn"]'))return openLearningCenter();
     const page=e.target.closest('[data-page]');if(page)return setPage(page.dataset.page);
     const adv=e.target.closest('[data-action="advance"]');if(adv)return advanceTime();
     const fund=e.target.closest('[data-fund]');if(fund&&!e.target.closest('[data-watch]'))return openFund(fund.dataset.fund,fund.dataset.mode||'buy',fund.dataset.class||'A');
@@ -591,12 +662,15 @@ function bindEvents(){
     if(e.target.closest('[data-action="open-news"]'))return setPage('news');
   });
   document.addEventListener('input',e=>{
+    if(e.target.id==='planDays'||e.target.id==='tradeAmount'){if(state.__modalFund)updateFeeCompare(state.__modalFund)}
+    if(e.target.id==='coachToggle'){state.beginnerMode=e.target.checked;save()}
     if(e.target.id==='sellRange'){
-      const pct=Number(e.target.value),btn=$('[data-submit-sell]');if(!btn)return;const h=getHolding(btn.dataset.submitSell,btn.dataset.class),f=fundById(btn.dataset.submitSell);if(!h)return;const units=availableUnits(h)*pct/100,days=holdingDays(h),rate=redemptionRate(days,f),gross=units*classNav(f,h.shareClass);$('#sellPct').textContent=pct+'%';$('#sellPreview').textContent=`预计卖出 ${units.toFixed(2)} 份，费率 ${(rate*100).toFixed(2)}%，预计到账 ${fmtMoney(gross*(1-rate))}`;
+      const pct=Number(e.target.value),btn=$('[data-submit-sell]');if(!btn)return;const h=getHolding(btn.dataset.submitSell,btn.dataset.class),f=fundById(btn.dataset.submitSell);if(!h)return;const units=availableUnits(h)*pct/100,days=holdingDays(h),rate=redemptionRate(days,f,h.shareClass),gross=units*classNav(f,h.shareClass);$('#sellPct').textContent=pct+'%';$('#sellPreview').textContent=`预计卖出 ${units.toFixed(2)} 份，费率 ${(rate*100).toFixed(2)}%，预计到账 ${fmtMoney(gross*(1-rate))}`;
     }
   });
   $('#modalWrap').addEventListener('click',e=>{if(e.target===$('#modalWrap'))closeModal()});
-  $('#startBtn').addEventListener('click',()=>{state.started=true;$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save()});
+  $('#feedbackClose').addEventListener('click',closeFeedback);$('#feedback').addEventListener('click',e=>{if(e.target===$('#feedback'))closeFeedback()});
+  $('#startBtn').addEventListener('click',()=>{state.started=true;$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save();if(state.beginnerMode)setTimeout(()=>showFeedback('🐱','基金猫上班啦！',['新手讲解已开启','看不懂的词可以点问号。','先用小额熟悉规则。'],false),260)});
   $('#bellBtn').addEventListener('click',()=>{state.bellClicks++;if(state.bellClicks>=7)unlock('moon')});
   $('#brandEaster').addEventListener('click',()=>{state.brandClicks++;if(state.brandClicks>=7){unlock('moon');renderAchievements();save()}});
   $('#clockBtn').addEventListener('click',()=>openModal(`<div class="modal-head"><div><h2>交易时钟</h2><p>${dateLabel(currentDate())} ${currentTime()}</p></div><button class="close" data-close>✕</button></div><div class="timeline"><div class="timeline-item"><i></i><div><b>15:00 前</b><p>按当日收盘净值定价，可在截止前撤单。</p></div></div><div class="timeline-item"><i></i><div><b>15:00 及以后</b><p>订单顺延到下一交易日，按下一交易日净值定价。</p></div></div><div class="timeline-item"><i></i><div><b>下一交易日</b><p>买入份额确认；赎回资金根据基金类型继续等待到账。</p></div></div></div><div class="hint">本游戏采用简化模拟。真实产品的确认时间、到账时间与费用以基金合同和销售平台规则为准。</div>`));
@@ -610,7 +684,7 @@ load();
 if(!state.currentMarket)createMarketForDay();
 updateEstimates();
 bindEvents();
-if(state.started){$('#boot').classList.add('hidden');$('#app').classList.remove('hidden')}
+if(state.started){$('#boot').classList.add('hidden');$('#app').classList.remove('hidden')}else{$$('[data-experience]').forEach(x=>x.classList.toggle('active',x.dataset.experience===state.experience))}
 renderAll();
 })();
 
