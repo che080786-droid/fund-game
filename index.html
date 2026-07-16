@@ -2,11 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" />
 <meta name="theme-color" content="#090b12" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>今天回本了吗？V6 沉浸式基金模拟器</title>
+<title>今天回本了吗？V6.1 决策复盘版</title>
 <style>
 :root{
   --bg:#080b12;--panel:#111624;--panel2:#171e2f;--panel3:#0d111c;
@@ -57,13 +57,30 @@ html[data-theme="light"] .theme-toggle,html[data-theme="light"] .clock-pill{back
 @keyframes fade{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(13deg)}75%{transform:rotate(-13deg)}}
 @media(max-width:390px){.asset{font-size:32px}.hero{padding:17px}.holding-grid{gap:6px}.hcell{padding:8px 6px}.achievement-grid{gap:6px}.achievement{padding:10px 4px}.day-cell{min-height:54px}.day-val{font-size:9px}}
 
+
+/* V6.1 可读性、浅色模式与复盘交互 */
+html{font-size:16px}
+body{font-size:15px;line-height:1.5}
+.market-clock{grid-template-columns:auto 1fr}.clock-actions{display:flex;flex-direction:column;gap:7px;min-width:92px}.fast-close{border:1px solid var(--line);border-radius:13px;padding:9px 10px;background:var(--panel2);color:var(--text);font-weight:800;font-size:12px}.fast-close:active{transform:scale(.97)}
+.reason-box{margin-top:12px;padding:13px;background:var(--panel3);border:1px solid var(--line);border-radius:16px}.reason-box label{display:block;font-size:13px;font-weight:800;margin-bottom:8px}.reason-box select{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:12px;font-size:14px}
+.lot-summary{margin-top:10px;padding:11px;border:1px dashed var(--line);border-radius:13px;background:var(--panel3)}.lot-summary b{font-size:13px}.lot-summary p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.lot-row{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.lot-row:last-child{border-bottom:0}.lot-row span{color:var(--muted)}
+.decision-list{display:flex;flex-direction:column;gap:9px;margin-top:12px}.decision-review{border:1px solid var(--line);background:var(--panel3);border-radius:15px;padding:12px}.decision-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.decision-head b{font-size:13px}.decision-score{font-weight:900;font-size:16px}.decision-review p{color:var(--muted);font-size:12px;line-height:1.55;margin:7px 0 0}.decision-tag{display:inline-block;margin-top:7px;border:1px solid var(--line);border-radius:999px;padding:4px 8px;color:var(--muted);font-size:11px}
+.experience-badge{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:11px;color:var(--muted);margin-top:7px}.profile-note{margin-top:11px;padding:11px;border-radius:14px;background:var(--panel3);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+html[data-experience="pro"] .fund-row{padding:11px 13px}html[data-experience="pro"] .fund-list{gap:7px}html[data-experience="pro"] .fund-sub{line-height:1.45}html[data-experience="new"] .pro-only{display:none!important}
+.brand small,.clock-pill span,.bottom-nav button,.tag,.sentiment,.impact-pills span,.section-head span,.section-head button,.quick-actions button,.fund-sub,.fund-est,.class-chip,.holding-code,.hcell span,.week,.day-num,.achievement small,.order-time,.order-meta span,.boot-note,.hint,.eyebrow,.mini span{font-size:11px!important}
+.news-card p,.market-clock p,.holding-pnl small,.beginner-note,.lesson p,.timeline-item p,.cat-bubble{font-size:12px!important}.fund-name,.holding-title,.order-title{font-size:14px!important}.hcell b,.mini b{font-size:13px!important}.bottom-nav button{min-height:54px}.quick-actions button,.advance,.fast-close,.holding-actions button,.cancel-order{min-height:42px}
+html[data-theme="light"] .card,html[data-theme="light"] .hero,html[data-theme="light"] .news-card,html[data-theme="light"] .fund-row,html[data-theme="light"] .holding,html[data-theme="light"] .order,html[data-theme="light"] .achievement,html[data-theme="light"] .modal,html[data-theme="light"] .feedback-card,html[data-theme="light"] .boot-card,html[data-theme="light"] .share-option,html[data-theme="light"] .amount-box,html[data-theme="light"] .fee-plan,html[data-theme="light"] .metric,html[data-theme="light"] .hcell,html[data-theme="light"] .day-cell,html[data-theme="light"] .quick-actions button,html[data-theme="light"] .filter,html[data-theme="light"] .clock-orb,html[data-theme="light"] .impact-pills span,html[data-theme="light"] .cat-bubble,html[data-theme="light"] .lesson,html[data-theme="light"] .timeline-item,html[data-theme="light"] .reason-box,html[data-theme="light"] .lot-summary,html[data-theme="light"] .decision-review{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}
+html[data-theme="light"] .mini,html[data-theme="light"] .seg,html[data-theme="light"] .valuation,html[data-theme="light"] .beginner-note,html[data-theme="light"] .profile-note{background:var(--panel3)!important;color:var(--text)!important}
+html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba(243,246,251,.97) 25%)}html[data-theme="light"] .bottom-nav:before{background:rgba(255,255,255,.96);border-color:var(--line);box-shadow:0 12px 35px rgba(60,76,110,.13)}html[data-theme="light"] .fund-row,html[data-theme="light"] .holding,html[data-theme="light"] .hero,html[data-theme="light"] .news-card{background-image:none!important}
+@media(max-width:390px){.clock-actions{min-width:86px}.asset{font-size:31px}.market-clock{gap:8px}.reason-box select{font-size:14px}.day-val{font-size:10px!important}}
+
 </style>
 </head>
 <body>
 <div id="boot" class="boot">
   <div class="boot-card">
     <button class="bell" id="bellBtn" aria-label="开盘铃">🔔</button>
-    <div class="boot-kicker">FUND LIFE SIMULATOR · V6</div>
+    <div class="boot-kicker">FUND LIFE SIMULATOR · V6.1</div>
     <h1>今天，能回本吗？</h1>
     <p>一套按照真实基金交易逻辑运转的模拟世界。<br>新闻会骗人，费用会偷吃收益，三点以后又是明天。</p>
     <div class="experience" id="experiencePick"><button data-experience="new" class="active"><span>🌱</span>完全不会</button><button data-experience="some"><span>🙂</span>知道一点</button><button data-experience="pro"><span>😎</span>老基民</button></div>
@@ -78,7 +95,7 @@ html[data-theme="light"] .theme-toggle,html[data-theme="light"] .clock-pill{back
   <header class="topbar">
     <div class="brand" id="brandEaster">
       <div class="brand-icon">📈</div>
-      <div><b>今天回本了吗？</b><small>沉浸式基金模拟器 · V6</small></div>
+      <div><b>今天回本了吗？</b><small>沉浸式基金模拟器 · V6.1</small></div>
     </div>
     <div class="top-actions"><button class="theme-toggle" id="themeBtn" aria-label="切换日夜模式">🌙</button><button class="clock-pill" id="clockBtn"><span id="dayLabel">DAY 1</span><b id="timeLabel">09:30</b></button></div>
   </header>
@@ -111,7 +128,7 @@ html[data-theme="light"] .theme-toggle,html[data-theme="light"] .clock-pill{back
 (() => {
 'use strict';
 
-const VERSION = '6.0.0';
+const VERSION = '6.1.0';
 const STORAGE_KEY = 'fund_simulator_v6';
 const LEGACY_STORAGE_KEY = 'fund_simulator_v5';
 const INITIAL_CASH = 50000;
@@ -173,6 +190,10 @@ const NEWS = [
   {icon:'🎲',title:'量化风格突然反转',sentiment:'风格切换',text:'昨天有效的策略今天开始互相踩踏，板块内部差异扩大。',all:-0.2,impact:{'红利':0.8,'消费':0.6,CPO:-0.8,'AI':-0.7},crowding:0.55}
 ];
 
+const BUY_REASONS = {
+  sector:'看好板块',valuation:'估值偏低',chase:'看到上涨想追',news:'新闻利好',diversify:'分散配置',random:'随便试试'
+};
+
 const ACHIEVEMENTS = [
   {id:'first_order',emoji:'🍼',name:'第一次下单',hidden:false,condition:'提交第一笔买入或卖出订单',roast:'恭喜，你正式从“看看”进入“可能会后悔”。',lesson:'交易前先知道自己为什么买。'},
   {id:'three_o_one',emoji:'⏰',name:'三点零一分',hidden:false,condition:'15:00 后提交一笔订单',roast:'就差一分钟，但基金公司不接受“我手机慢”。',lesson:'截止时间决定订单按哪一天的净值成交。'},
@@ -191,6 +212,11 @@ const ACHIEVEMENTS = [
   {id:'alarm',emoji:'🚓',name:'建议报警',hidden:false,condition:'单日组合亏损超过 5%',roast:'警察叔叔表示市场波动不归他们管。',lesson:'能让你睡不着的仓位，通常已经太大。'},
   {id:'moon',emoji:'🌙',name:'月亮照常升起',hidden:true,condition:'找到首页隐藏彩蛋',roast:'净值会落，月亮还会升起来。',lesson:'一次亏损不是世界末日。'},
   {id:'six_seventeen',emoji:'🎂',name:'6·17限定',hidden:true,condition:'提交金额为 617 元的订单',roast:'这笔交易没有玄学加成，但有一点可爱。',lesson:'金额可以有纪念意义，决策仍要有理由。'},
+  {id:'cat_staff',emoji:'🐾',name:'猫猫编外员工',hidden:true,condition:'累计点击基金猫 9 次',roast:'工资没有，猫毛管够。',lesson:'工具是辅助，决定仍然属于你。'},
+  {id:'love_order',emoji:'💌',name:'这不是投资建议，是告白',hidden:true,condition:'提交一笔 520 元订单',roast:'市场不一定爱你，但这笔金额挺会说话。',lesson:'仪式感可以有，理由也要有。'},
+  {id:'fee_accountant',emoji:'🧮',name:'费用计算器成精',hidden:false,condition:'根据计划持有期选择预计更省的 A/C 类',roast:'别人看涨跌，你先看费率表。',lesson:'同一基金的份额类别应按具体费率和持有期限比较。'},
+  {id:'all_in',emoji:'🪙',name:'现金清零术',hidden:true,condition:'下单后现金占比低于 1%',roast:'现在你拥有很多信仰，以及几乎没有选择权。',lesson:'留有现金，是留有纠错空间。'},
+  {id:'cancel_chase',emoji:'🧯',name:'冲动撤回成功',hidden:true,condition:'撤销一笔理由为“看到上涨想追”的买入单',roast:'手比脑子快了一次，脑子最终追回来了。',lesson:'能在成交前推翻冲动，是一项真实能力。'},
   {id:'finish',emoji:'🏁',name:'活到最后',hidden:false,condition:'完成 30 个交易日',roast:'市场没把你带走，说明多少学会了点东西。',lesson:'长期生存比单日暴赚更重要。'}
 ];
 
@@ -255,8 +281,8 @@ function initialState(){
     funds:makeFunds(),holdings:{},orders:[],records:[],newsHistory:[],currentMarket:null,
     watchlist:[],achievements:[],cancelCount:0,noTradeDays:0,cashStreak:0,brandClicks:0,bellClicks:0,
     realizedPnL:0,activeSector:'全部',calendarMode:'amount',calendarMonth:dates[0].slice(0,7),
-    stats:{orders:0,shortFeePaid:0,totalFees:0,panicSells:0,profitSells:0},
-    currentPage:'home',lastAction:'',ending:null,theme:'dark',experience:'new',beginnerMode:true,catSeen:0
+    stats:{orders:0,shortFeePaid:0,totalFees:0,panicSells:0,profitSells:0,reasons:{}},
+    currentPage:'home',lastAction:'',ending:null,theme:'dark',experience:'new',beginnerMode:true,catSeen:0,catClicks:0,lastReview:null
   };
 }
 let state=initialState();
@@ -264,15 +290,28 @@ let state=initialState();
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
 function migrateState(saved){
   const fresh=initialState();
-  const merged={...fresh,...saved,version:VERSION,theme:saved.theme||'dark',experience:saved.experience||'new',beginnerMode:saved.beginnerMode??true,catSeen:saved.catSeen||0};
+  const merged={...fresh,...saved,version:VERSION,theme:saved.theme||'dark',experience:saved.experience||'new',beginnerMode:saved.beginnerMode??(saved.experience==='new'),catSeen:saved.catSeen||0,catClicks:saved.catClicks||0,lastReview:saved.lastReview||null};
   const newFunds=makeFunds();
   merged.funds=newFunds.map(n=>{const old=(saved.funds||[]).find(x=>x.id===n.id);return old?{...n,...old,feeRules:n.feeRules}:n});
-  merged.stats={...fresh.stats,...(saved.stats||{})};
+  merged.stats={...fresh.stats,...(saved.stats||{}),reasons:{...(saved.stats?.reasons||{})}};
+  const normalized={};
+  Object.entries(merged.holdings||{}).forEach(([key,h])=>{
+    const copy={...h,realized:h.realized||0};
+    let lots=(h.lots||[]).map(l=>({...l,confirmDate:l.confirmDate||merged.dates[l.confirmDay??h.confirmDay]||merged.dates[0]})).filter(l=>l.units>1e-8);
+    if(!lots.length&&h.units>1e-8)lots=[{units:h.units,cost:h.costAmount||0,confirmDay:h.confirmDay||0,confirmDate:merged.dates[h.confirmDay||0]||merged.dates[0]}];
+    copy.lots=lots;copy.units=lots.reduce((s,l)=>s+l.units,0);copy.costAmount=lots.reduce((s,l)=>s+l.cost,0);copy.confirmDay=Math.min(...lots.map(l=>l.confirmDay??0));
+    if(copy.units>1e-8)normalized[key]=copy;
+  });
+  merged.holdings=normalized;
   return merged;
+}
+function applyExperience(){
+  document.documentElement.dataset.experience=state.experience||'new';
+  if(state.experience==='new')state.beginnerMode=true;
 }
 function load(){
   try{const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem(LEGACY_STORAGE_KEY);if(raw)state=migrateState(JSON.parse(raw))}catch(e){console.warn(e)}
-  applyTheme();
+  applyTheme();applyExperience();
 }
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1900)}
 function applyTheme(){document.documentElement.dataset.theme=state.theme||'dark';const b=$('#themeBtn');if(b)b.textContent=state.theme==='light'?'☀️':'🌙'}
@@ -305,11 +344,35 @@ function totalReturn(){return (totalAsset()/INITIAL_CASH-1)*100}
 function cashRatio(){return state.cash/Math.max(totalAsset(),1)}
 function mood(){const r=totalReturn();if(r>10)return'开始膨胀';if(r>3)return'嘴角上扬';if(r<-12)return'想卸载软件';if(r<-5)return'假装没看';if(cashRatio()<.05)return'满仓祈祷';return'冷静观察'}
 function feeConfig(f,shareClass){return f.feeRules?.[shareClass]||buildFeeRules(f,f.id.split('-').at(-1))[shareClass]}
-function holdingDays(h,atDay=state.day){return Math.max(0,atDay-h.confirmDay+1)}
+function calendarDaysBetween(start,end=currentDate()){
+  if(!start||!end)return 0;return Math.max(0,Math.round((dateObj(end)-dateObj(start))/86400000));
+}
+function lotDays(lot,atDate=currentDate()){return calendarDaysBetween(lot.confirmDate||state.dates[lot.confirmDay||0],atDate)}
+function holdingDays(h,atDay=state.day){const atDate=state.dates[atDay]||currentDate();const lots=(h?.lots||[]).filter(l=>l.units>1e-8);return lots.length?Math.max(...lots.map(l=>lotDays(l,atDate))):0}
 function redemptionStep(days,f,shareClass){const rules=feeConfig(f,shareClass).redemption;return rules.find(x=>days<x.lt)||rules.at(-1)}
 function redemptionRate(days,f,shareClass='A'){return redemptionStep(days,f,shareClass).rate}
 function estimatedClassCost(f,shareClass,amount,days){const cfg=feeConfig(f,shareClass);const purchase=amount*cfg.purchase;const service=amount*cfg.service*days/365;const redemption=amount*redemptionRate(days,f,shareClass);return {purchase,service,redemption,total:purchase+service+redemption}}
 function feeLadderHTML(f,shareClass,days){return feeConfig(f,shareClass).redemption.map(x=>`<div class="fee-ladder-row ${days<x.lt&&redemptionStep(days,f,shareClass)===x?'active':''}"><span>${x.label}</span><b>${(x.rate*100).toFixed(2)}%</b></div>`).join('')}
+function holdingAgeSummary(h,atDate=currentDate()){
+  const ages=(h.lots||[]).filter(l=>l.units>1e-8).map(l=>lotDays(l,atDate));if(!ages.length)return {oldest:0,newest:0,count:0};
+  return {oldest:Math.max(...ages),newest:Math.min(...ages),count:ages.length};
+}
+function previewSellLots(h,units,f,nav=classNav(f,h.shareClass),atDate=state.dates[effectiveDayForNewOrder()]||currentDate()){
+  let remaining=units,fee=0,gross=0,cost=0;const parts=[];
+  const lots=(h.lots||[]).filter(l=>l.units>1e-8).sort((a,b)=>dateObj(a.confirmDate)-dateObj(b.confirmDate));
+  for(const lot of lots){if(remaining<=1e-8)break;const take=Math.min(remaining,lot.units);const days=lotDays(lot,atDate);const rate=redemptionRate(days,f,h.shareClass);const lotGross=take*nav;const lotCost=lot.cost*(take/lot.units);const lotFee=lotGross*rate;parts.push({units:take,days,rate,gross:lotGross,fee:lotFee,cost:lotCost,confirmDate:lot.confirmDate});gross+=lotGross;fee+=lotFee;cost+=lotCost;remaining-=take}
+  return {gross,fee,proceeds:gross-fee,cost,weightedRate:gross?fee/gross:0,parts,unfilled:remaining};
+}
+function consumeSellLots(h,units,f,nav,atDate=currentDate()){
+  const preview=previewSellLots(h,units,f,nav,atDate);let remaining=units;const nextLots=[];
+  const lots=(h.lots||[]).filter(l=>l.units>1e-8).sort((a,b)=>dateObj(a.confirmDate)-dateObj(b.confirmDate));
+  for(const lot of lots){if(remaining<=1e-8){nextLots.push(lot);continue}const take=Math.min(remaining,lot.units);const left=lot.units-take;if(left>1e-8)nextLots.push({...lot,units:left,cost:lot.cost*(left/lot.units)});remaining-=take}
+  h.lots=nextLots;h.units=nextLots.reduce((s,l)=>s+l.units,0);h.costAmount=nextLots.reduce((s,l)=>s+l.cost,0);return preview;
+}
+function lotSummaryHTML(h,f,units=availableUnits(h)){
+  const p=previewSellLots(h,units,f);const rows=p.parts.slice(0,4).map(x=>`<div class="lot-row"><span>${x.confirmDate.slice(5)}确认 · ${x.days}自然日 · ${x.units.toFixed(2)}份</span><b>${(x.rate*100).toFixed(2)}%</b></div>`).join('');
+  return `<div class="lot-summary"><b>分批份额按先进先出计费</b>${rows}${p.parts.length>4?`<p>另有 ${p.parts.length-4} 批份额未展开。</p>`:''}<p>卖出时会按每一批份额自己的自然持有天数分别计算赎回费。</p></div>`;
+}
 function settlementDays(f){if(f.sector==='海外')return 3;if(f.sector==='稳健')return 1;return 2}
 function orderCanCancel(o){return o.status==='submitted'&&(state.day<o.effectiveDay||(state.day===o.effectiveDay&&state.stage<3))}
 function effectiveDayForNewOrder(){return state.stage<3?state.day:state.day+1}
@@ -356,106 +419,102 @@ function processMorning(){
     if(o.type==='buy'&&o.status==='priced'&&o.confirmDay<=state.day){
       const key=holdingKey(o.fundId,o.shareClass);let h=state.holdings[key];
       if(!h){h={fundId:o.fundId,shareClass:o.shareClass,units:0,costAmount:0,confirmDay:state.day,lots:[],realized:0};state.holdings[key]=h}
-      h.units+=o.units;h.costAmount+=o.amount;h.confirmDay=Math.min(h.confirmDay,state.day);h.lots.push({units:o.units,cost:o.amount,confirmDay:state.day});
-      o.status='confirmed';o.confirmedAt=`${currentDate()} 09:30`;confirmedCount++;
+      const lot={units:o.units,cost:o.amount,confirmDay:state.day,confirmDate:currentDate()};
+      h.lots.push(lot);h.units=h.lots.reduce((s,l)=>s+l.units,0);h.costAmount=h.lots.reduce((s,l)=>s+l.cost,0);h.confirmDay=Math.min(...h.lots.map(l=>l.confirmDay));
+      o.status='confirmed';o.confirmedAt=`${currentDate()} 09:30`;o.confirmDate=currentDate();confirmedCount++;
     }
     if(o.type==='sell'&&(o.status==='priced'||o.status==='settling')&&o.settlementDay<=state.day){
       state.cash+=o.proceeds;o.status='settled';o.settledAt=`${currentDate()} 09:30`;settledCount++;
     }
   });
-  if(confirmedCount)setTimeout(()=>showFeedback('🎉','份额确认成功',[`持仓 +${confirmedCount}`,'昨天的订单，今天正式住进账户。']),180);
+  if(confirmedCount)setTimeout(()=>showFeedback('🎉','份额确认成功',[`持仓 +${confirmedCount}`,'每笔买入会作为独立份额批次开始计算自然持有天数。']),180);
   else if(settledCount)setTimeout(()=>showFeedback('💰','赎回到账',[`${settledCount} 笔资金已回到现金`,'基金猫：先别急着把它再花出去。']),180);
 }
-
 function processClose(){
   if(state.currentMarket.closed)return;
   state.currentMarket.closed=true;
   state.funds.forEach(f=>{
     const r=state.currentMarket.fundReturns[f.id];
-    f.change=r;
-    f.navA=round(Math.max(.1,f.navA*(1+r/100)),4);
-    const cService=feeConfig(f,'C').service/252;
-    f.navC=round(Math.max(.1,f.navC*(1+r/100)*(1-cService)),4);
-    f.valuation=clamp(f.valuation+r*1.15+(Math.random()-.5)*2,3,97);
-    f.historyA.push(f.navA);f.historyC.push(f.navC);if(f.historyA.length>80){f.historyA.shift();f.historyC.shift()}
+    f.change=r;f.navA=round(Math.max(.1,f.navA*(1+r/100)),4);
+    const cService=feeConfig(f,'C').service/252;f.navC=round(Math.max(.1,f.navC*(1+r/100)*(1-cService)),4);
+    f.valuation=clamp(f.valuation+r*1.15+(Math.random()-.5)*2,3,97);f.historyA.push(f.navA);f.historyC.push(f.navC);if(f.historyA.length>80){f.historyA.shift();f.historyC.shift()}
     const dd=maxDrawdown(f.historyA);f.maxDrawdown=dd.mdd;f.drawdownDays=dd.days;
   });
   state.orders.filter(o=>o.status==='submitted'&&o.effectiveDay===state.day).forEach(o=>{
-    const f=fundById(o.fundId);const nav=classNav(f,o.shareClass);
+    const f=fundById(o.fundId),nav=classNav(f,o.shareClass);
     if(o.type==='buy'){
-      const fee=feeConfig(f,o.shareClass).purchase*o.amount;const net=o.amount-fee;
-      o.fee=fee;o.price=nav;o.units=net/nav;o.status='priced';o.confirmDay=state.day+1;o.pricedAt=`${currentDate()} 15:00`;
-      state.stats.totalFees+=fee;
+      const fee=feeConfig(f,o.shareClass).purchase*o.amount,net=o.amount-fee;o.fee=fee;o.price=nav;o.units=net/nav;o.status='priced';o.confirmDay=state.day+1;o.pricedAt=`${currentDate()} 15:00`;state.stats.totalFees+=fee;
     }else{
-      const h=getHolding(o.fundId,o.shareClass);const days=holdingDays(h,state.day);const rate=redemptionRate(days,f,o.shareClass);const gross=o.units*nav;const fee=gross*rate;const proceeds=gross-fee;
-      const unitRatio=o.units/Math.max(h.units,1e-9);const costAllocated=h.costAmount*unitRatio;
-      h.units-=o.units;h.costAmount-=costAllocated;h.realized+=(proceeds-costAllocated);
-      if(h.units<1e-7)delete state.holdings[holdingKey(o.fundId,o.shareClass)];
-      o.price=nav;o.fee=fee;o.proceeds=proceeds;o.status='priced';o.holdingDays=days;o.settlementDay=state.day+settlementDays(f);o.pricedAt=`${currentDate()} 15:00`;
-      state.realizedPnL+=proceeds-costAllocated;state.stats.totalFees+=fee;if(days<7){state.stats.shortFeePaid+=fee;unlock('short_fee')}
+      const h=getHolding(o.fundId,o.shareClass);if(!h)return;
+      const result=consumeSellLots(h,o.units,f,nav,currentDate());h.realized=(h.realized||0)+(result.proceeds-result.cost);if(h.units<1e-7)delete state.holdings[holdingKey(o.fundId,o.shareClass)];
+      o.price=nav;o.fee=result.fee;o.proceeds=result.proceeds;o.status='priced';o.holdingDays=result.parts.length?Math.max(...result.parts.map(x=>x.days)):0;o.lotBreakdown=result.parts;o.settlementDay=state.day+settlementDays(f);o.pricedAt=`${currentDate()} 15:00`;
+      state.realizedPnL+=result.proceeds-result.cost;state.stats.totalFees+=result.fee;if(result.parts.some(x=>x.days<7)){state.stats.shortFeePaid+=result.fee;unlock('short_fee')}
     }
   });
-  const nh=state.newsHistory[state.newsHistory.length-1];if(nh)nh.sectorReturns=deepClone(state.currentMarket.sectorReturns);
-  detectCloseAchievements();
+  const nh=state.newsHistory[state.newsHistory.length-1];if(nh)nh.sectorReturns=deepClone(state.currentMarket.sectorReturns);detectCloseAchievements();
 }
+function sectorWeightBefore(sector){const total=holdingsValue();if(!total)return 0;return allHoldings().filter(h=>fundById(h.fundId).sector===sector).reduce((s,h)=>s+holdingValue(h),0)/total*100}
+function evaluateBuyDecision(o){
+  const f=fundById(o.fundId),ctx=o.context||{},reason=o.reason||'random';let score=58,why='这次理由还不够清晰。';
+  if(reason==='valuation'){score=ctx.valuation<=40?90:ctx.valuation<=65?68:38;why=ctx.valuation<=40?'估值位置确实偏低，理由与数据一致。':'你说估值低，但当时的历史百分位并不低。'}
+  else if(reason==='diversify'){score=(ctx.sectorWeightBefore||0)<15?88:48;why=(ctx.sectorWeightBefore||0)<15?'它确实补充了新的风险来源。':'组合里本来就有不少同板块暴露，这次不算真正分散。'}
+  else if(reason==='chase'){score=(ctx.estimate||0)>3?28:46;why='“正在涨”说明情绪强，不自动说明价格合适。'}
+  else if(reason==='news'){score=(ctx.crowding||0)>.9?42:64;why=(ctx.crowding||0)>.9?'新闻偏利好，但拥挤度很高，兑现风险也在。':'你参考了新闻，但仍需同时检查估值和筹码。'}
+  else if(reason==='sector'){score=(ctx.valuation||50)>75?52:72;why=(ctx.valuation||50)>75?'方向可以看好，但当时估值已经偏高。':'板块逻辑相对完整，但仍需要仓位和退出计划。'}
+  else if(reason==='random'){score=25;why='“随便试试”可以用于小额学习，但不是可复用的决策方法。'}
+  const outcome=state.currentMarket?.fundReturns?.[o.fundId]||0;const grade=score>=80?'优秀':score>=65?'尚可':score>=45?'需检查':'冲动警报';
+  return {orderId:o.id,fundId:o.fundId,reason,reasonLabel:BUY_REASONS[reason]||reason,score,grade,why,outcome,resultText:`收盘 ${fmtPct(outcome)}。${(outcome>=0)===(score>=65)?'结果与过程暂时同向':'结果和过程没有站在同一边'}，但评价仍以当时能看到的信息为准。`};
+}
+function decisionReviewHTML(reviews=[]){if(!reviews.length)return '<div class="hint">今天没有买入。没有操作，也是一种决定。</div>';return `<div class="decision-list">${reviews.map(r=>`<div class="decision-review"><div class="decision-head"><b>${fundById(r.fundId).name} · ${r.reasonLabel}</b><span class="decision-score ${r.score>=65?'up':'down'}">${r.score}分</span></div><span class="decision-tag">${r.grade}</span><p>${r.why}<br>${r.resultText}</p></div>`).join('')}</div>`}
+function showDailyReview(r){if(!r)return;const reviews=r.decisionReviews||[];const first=reviews[0];showFeedback('🐱','基金猫收盘复盘',[first?`决策评分：${first.score} · ${first.grade}`:'今天没有买入操作',first?first.why:'少做不等于错过，关键是你是否有计划。','今天赚亏，不等于今天决策的好坏。'],false)}
 
 function finalizeDay(){
-  if(state.records.some(r=>r.day===state.day))return;
-  const asset=totalAsset();const pnl=asset-state.dayStartAsset;const rate=state.dayStartAsset?pnl/state.dayStartAsset*100:0;
-  const sorted=[...state.funds].sort((a,b)=>b.change-a.change);
-  const todaysOrders=state.orders.filter(o=>o.createdDay===state.day).map(o=>({type:o.type,fundId:o.fundId,shareClass:o.shareClass,status:o.status,amount:o.amount,units:o.units||0}));
-  state.records.push({day:state.day,date:currentDate(),asset,pnl,rate,news:state.currentMarket.news.title,top:{id:sorted[0].id,change:sorted[0].change},worst:{id:sorted.at(-1).id,change:sorted.at(-1).change},orders:todaysOrders});
-  if(todaysOrders.length===0)state.noTradeDays++;else state.noTradeDays=0;
-  if(state.noTradeDays>=5)unlock('look_only');
-  if(cashRatio()>.2)state.cashStreak++;else state.cashStreak=0;if(state.cashStreak>=5)unlock('cash_king');
-  if(rate<=-5)unlock('alarm');
-  if(rate<-3&&!todaysOrders.some(o=>o.type==='sell'))unlock('diamond');
-  detectPortfolioAchievements();
-  save();
+  const existing=state.records.find(r=>r.day===state.day);if(existing)return existing;
+  const asset=totalAsset(),pnl=asset-state.dayStartAsset,rate=state.dayStartAsset?pnl/state.dayStartAsset*100:0;const sorted=[...state.funds].sort((a,b)=>b.change-a.change);
+  const rawOrders=state.orders.filter(o=>o.createdDay===state.day);const decisionReviews=rawOrders.filter(o=>o.type==='buy'&&o.status!=='cancelled').map(evaluateBuyDecision);
+  decisionReviews.forEach(r=>{const o=state.orders.find(x=>x.id===r.orderId);if(o)o.decisionReview=r});
+  const todaysOrders=rawOrders.map(o=>({id:o.id,type:o.type,fundId:o.fundId,shareClass:o.shareClass,status:o.status,amount:o.amount,units:o.units||0,reason:o.reason||null}));
+  const record={day:state.day,date:currentDate(),asset,pnl,rate,news:state.currentMarket.news.title,top:{id:sorted[0].id,change:sorted[0].change},worst:{id:sorted.at(-1).id,change:sorted.at(-1).change},orders:todaysOrders,decisionReviews};
+  state.records.push(record);state.lastReview=record;
+  if(todaysOrders.length===0)state.noTradeDays++;else state.noTradeDays=0;if(state.noTradeDays>=5)unlock('look_only');if(cashRatio()>.2)state.cashStreak++;else state.cashStreak=0;if(state.cashStreak>=5)unlock('cash_king');if(rate<=-5)unlock('alarm');if(rate<-3&&!todaysOrders.some(o=>o.type==='sell'))unlock('diamond');detectPortfolioAchievements();save();return record;
 }
-
 function nextDay(){
-  finalizeDay();
-  if(state.day>=MAX_DAYS-1){state.ending=buildEnding();unlock('finish');renderAll();openEnding();return}
+  finalizeDay();if(state.day>=MAX_DAYS-1){state.ending=buildEnding();unlock('finish');renderAll();openEnding();return}
   state.day++;state.stage=0;processMorning();state.dayStartAsset=totalAsset();createMarketForDay();updateEstimates();renderAll();save();toast('新交易日开盘');
 }
-
 function advanceTime(){
   if(state.stage<2){state.stage++;updateEstimates();renderAll();save();return}
   if(state.stage===2){state.stage=3;processClose();updateEstimates();renderAll();save();toast('15:00：今日净值已锁定');return}
-  if(state.stage===3){state.stage=4;finalizeDay();renderAll();save();toast('净值更新完成，来复盘今天');return}
+  if(state.stage===3){state.stage=4;const r=finalizeDay();renderAll();save();showDailyReview(r);return}
   nextDay();
 }
-
-function submitBuy(fid,shareClass,amount){
-  const f=fundById(fid);amount=Number(amount);
-  if(!amount||amount<=0)return toast('请输入有效金额');
-  if(amount>state.cash+1e-6)return toast('可用现金不够');
+function performFastClose(){
+  if(state.stage<3){state.stage=3;processClose();updateEstimates()}
+  if(state.stage===3){state.stage=4;const r=finalizeDay();renderAll();save();showDailyReview(r)}else renderAll();
+}
+function fastClose(){
+  if(state.stage>=4)return toast('今天已经收盘完成');
+  const cancellable=state.orders.filter(o=>orderCanCancel(o)&&o.effectiveDay===state.day);
+  if(cancellable.length){openModal(`<div class="modal-head"><div><h2>直接到收盘？</h2><p>今天还有 ${cancellable.length} 笔可撤订单。跳过后会立即按收盘净值处理，无法再撤销。</p></div><button class="close" data-close>✕</button></div><button class="secondary" data-action="review-orders">先看订单</button><button class="primary" data-action="confirm-fast-close">确认，直接到收盘</button>`);return}
+  performFastClose();
+}
+function submitBuy(fid,shareClass,amount,reason,planDays=20){
+  const f=fundById(fid);amount=Number(amount);planDays=Number(planDays)||20;
+  if(!amount||amount<=0)return toast('请输入有效金额');if(amount>state.cash+1e-6)return toast('可用现金不够');if(!reason)return toast('先告诉基金猫：为什么买？');
   const eff=effectiveDayForNewOrder();if(eff>=state.dates.length)return toast('挑战已接近结束，暂不受理');
-  state.cash-=amount;
-  const o={id:'O'+Date.now()+Math.random().toString(36).slice(2,6),type:'buy',fundId:fid,shareClass,amount,status:'submitted',createdDay:state.day,createdAt:`${currentDate()} ${currentTime()}`,effectiveDay:eff};
-  state.orders.unshift(o);state.stats.orders++;state.lastAction='buy';unlock('first_order');
-  if(state.stage>=3)unlock('three_o_one');if(Math.round(amount)===617)unlock('six_seventeen');
-  detectAC(fid);closeModal();renderAll();save();showFeedback('✨','买入申请成功！',[state.stage<3?'待确认订单 +1':'预约订单 +1',state.stage<3?'15:00 前可以撤单。':'将在下一交易日受理。','愿市场善待你。']);
+  const context={valuation:f.valuation,estimate:estimateForFund(f),sectorWeightBefore:sectorWeightBefore(f.sector),newsImpact:(state.currentMarket.news.impact?.[f.sector]||0)+(state.currentMarket.news.all||0),crowding:state.currentMarket.news.crowding||0,planDays};
+  state.cash-=amount;const o={id:'O'+Date.now()+Math.random().toString(36).slice(2,6),type:'buy',fundId:fid,shareClass,amount,status:'submitted',createdDay:state.day,createdAt:`${currentDate()} ${currentTime()}`,effectiveDay:eff,reason,context,planDays};
+  state.orders.unshift(o);state.stats.orders++;state.stats.reasons[reason]=(state.stats.reasons[reason]||0)+1;state.lastAction='buy';unlock('first_order');if(state.stage>=3)unlock('three_o_one');if(Math.round(amount)===617)unlock('six_seventeen');if(Math.round(amount)===520)unlock('love_order');
+  const aCost=estimatedClassCost(f,'A',amount,planDays).total,cCost=estimatedClassCost(f,'C',amount,planDays).total;if((shareClass==='A'&&aCost<=cCost)||(shareClass==='C'&&cCost<=aCost))unlock('fee_accountant');if(cashRatio()<.01)unlock('all_in');detectAC(fid);closeModal();renderAll();save();showFeedback('✨','买入申请成功！',[`${BUY_REASONS[reason]} · 待复盘`,state.stage<3?'15:00 前可以撤单。':'将在下一交易日受理。','愿市场善待你。']);
 }
-
 function submitSell(fid,shareClass,ratio){
-  const h=getHolding(fid,shareClass);if(!h)return toast('没有可卖持仓');
-  const avail=availableUnits(h);const units=avail*ratio;if(units<=1e-8)return toast('可卖份额不足');
-  const eff=effectiveDayForNewOrder();const f=fundById(fid);
-  const o={id:'O'+Date.now()+Math.random().toString(36).slice(2,6),type:'sell',fundId:fid,shareClass,units,ratio,amount:units*classNav(f,shareClass),status:'submitted',createdDay:state.day,createdAt:`${currentDate()} ${currentTime()}`,effectiveDay:eff};
-  state.orders.unshift(o);state.stats.orders++;state.lastAction='sell';unlock('first_order');if(state.stage>=3)unlock('three_o_one');
-  const pnlRate=(holdingValue(h)/h.costAmount-1)*100;if(ratio>.98&&Math.abs(pnlRate)<=.5)unlock('break_even_sell');
-  closeModal();renderAll();save();showFeedback('🪽','赎回申请成功！',[state.stage<3?'待处理订单 +1':'预约赎回 +1',state.stage<3?'15:00 前仍可以撤单。':'将在下一交易日受理。','基金猫：希望不是卖飞。'],false);
+  const h=getHolding(fid,shareClass);if(!h)return toast('没有可卖持仓');const avail=availableUnits(h),units=avail*ratio;if(units<=1e-8)return toast('可卖份额不足');const eff=effectiveDayForNewOrder(),f=fundById(fid),preview=previewSellLots(h,units,f,classNav(f,shareClass),state.dates[eff]||currentDate());
+  const o={id:'O'+Date.now()+Math.random().toString(36).slice(2,6),type:'sell',fundId:fid,shareClass,units,ratio,amount:preview.gross,status:'submitted',createdDay:state.day,createdAt:`${currentDate()} ${currentTime()}`,effectiveDay:eff,feePreview:preview.fee,lotPreview:preview.parts};
+  state.orders.unshift(o);state.stats.orders++;state.lastAction='sell';unlock('first_order');if(state.stage>=3)unlock('three_o_one');const pnlRate=(holdingValue(h)/h.costAmount-1)*100;if(ratio>.98&&Math.abs(pnlRate)<=.5)unlock('break_even_sell');closeModal();renderAll();save();showFeedback('🪽','赎回申请成功！',[`预计分 ${preview.parts.length} 批份额计费`,state.stage<3?'15:00 前仍可以撤单。':'将在下一交易日受理。','基金猫：希望不是卖飞。'],false);
 }
-
 function cancelOrder(id){
-  const o=state.orders.find(x=>x.id===id);if(!o||!orderCanCancel(o))return toast('该订单已经不能撤销');
-  if(o.type==='buy')state.cash+=o.amount;
-  o.status='cancelled';o.cancelledAt=`${currentDate()} ${currentTime()}`;state.cancelCount++;if(state.cancelCount>=3)unlock('cancel_master');
-  renderAll();save();toast('撤单成功');
+  const o=state.orders.find(x=>x.id===id);if(!o||!orderCanCancel(o))return toast('该订单已经不能撤销');if(o.type==='buy')state.cash+=o.amount;o.status='cancelled';o.cancelledAt=`${currentDate()} ${currentTime()}`;state.cancelCount++;if(state.cancelCount>=3)unlock('cancel_master');if(o.type==='buy'&&o.reason==='chase')unlock('cancel_chase');renderAll();save();toast('撤单成功');
 }
-
 function detectAC(fid){
   const a=getHolding(fid,'A'),c=getHolding(fid,'C');
   const pendingA=state.orders.some(o=>o.fundId===fid&&o.shareClass==='A'&&['submitted','priced'].includes(o.status));
@@ -489,6 +548,8 @@ function achievementProgress(a){
     case'look_only':return `${Math.min(state.noTradeDays,5)} / 5 日`;
     case'cash_king':return `${Math.min(state.cashStreak,5)} / 5 日`;
     case'diversified':return `${Math.min(new Set(allHoldings().map(h=>fundById(h.fundId).sector)).size,4)} / 4 板块`;
+    case'cat_staff':return `${Math.min(state.catClicks||0,9)} / 9 次`;
+    case'fee_accountant':return state.achievements.includes(a.id)?'已完成':'按预计持有期选一次更省的份额';
     case'finish':return `${Math.min(state.records.length,30)} / 30 日`;
     default:return state.achievements.includes(a.id)?'已解锁':'等待触发';
   }
@@ -524,24 +585,15 @@ function catMessage(){
   const r=totalReturn();if(state.stage===2)return '只剩十分钟啦。下单前再看一眼：你买的是逻辑，还是怕错过？';if(state.stage>=3)return '收盘了。今天的结果不等于今天的决策质量。';if(r<-5)return '今天有点疼，但先别把“难受”当作卖出理由。';if(cashRatio()<.08)return '现金快被你花光了。留一点选择权，也算一种仓位。';if(!allHoldings().length)return '第一次买可以小一点。学规则，不需要先交一大笔学费。';return '我负责提醒，你负责决定。市场可不会替我们负责。';
 }
 function renderHome(){
-  const market=state.currentMarket;const news=market.news;const date=currentDate();
-  const watch=state.watchlist.map(fundById).filter(Boolean).slice(0,5);const top=[...state.funds].sort((a,b)=>b.estimate-a.estimate).slice(0,4);
-  const mission=homeMission();
-  $('#page-home').innerHTML=`
-    <div class="home-mission"><div class="mission-kicker">TODAY'S MISSION</div><div class="mission-title">${mission.title}</div><div class="mission-sub">${mission.sub}</div><div class="mission-pills"><span>${dateLabel(date)}</span><span>${STAGE_LABELS[state.stage]}</span><span>${news.sentiment}</span></div></div>
-    <div class="hero">
-      <div class="eyebrow">账户总资产 · ${dateLabel(date)}</div>
-      <div class="hero-row"><div class="asset number-roll" data-roll="totalAsset" data-value="${totalAsset()}" data-format="money">${fmtMoney(totalAsset())}</div><div class="return ${cls(totalReturn())} number-roll" data-roll="totalReturn" data-value="${totalReturn()}" data-format="pct">${fmtPct(totalReturn())}</div></div>
-      <div class="hero-stats"><div class="mini"><span>可用现金</span><b class="number-roll" data-roll="cash" data-value="${state.cash}" data-format="money">${fmtMoney(state.cash)}</b></div><div class="mini"><span>持仓市值</span><b class="number-roll" data-roll="holdingsValue" data-value="${holdingsValue()}" data-format="money">${fmtMoney(holdingsValue())}</b></div><div class="mini"><span>当前心态</span><b>${mood()}</b></div></div>
-      <div class="market-clock"><div class="clock-orb">${state.stage<3?'🕒':'🌙'}</div><div><h3>${STAGE_LABELS[state.stage]}</h3><p>${clockHint()}</p></div><button class="advance" data-action="advance">${advanceLabel()}</button></div>
-    </div>
-    <div class="news-card" data-action="open-news"><div class="news-top"><div class="tag">TODAY'S MARKET</div><div class="sentiment">${news.sentiment}</div></div><h3>${news.icon} ${news.title}</h3><p>${news.text}</p><div class="impact-pills">${Object.entries(news.impact||{}).slice(0,4).map(([k,v])=>`<span>${k} ${v>0?'偏利好':'偏利空'}</span>`).join('')||'<span>全市场情绪事件</span>'}</div></div>
-    <div class="quick-actions"><button data-page="news"><span>📰</span>新闻中心</button><button data-page="achievements"><span>🏆</span>成就彩蛋</button><button data-action="show-trades"><span>🧾</span>交易记录</button><button data-action="learn"><span>🌱</span>基金入门</button></div>
-    <div class="section-head"><h2>${watch.length?'我的自选':'盘中热度'}</h2><button data-page="market">查看全部 →</button></div>
-    <div class="fund-list">${(watch.length?watch:top).map(fundRowHTML).join('')}</div>
-    <div class="section-head"><h2>基金猫提醒</h2><span>${state.beginnerMode?'新手讲解已开启':'轻触猫猫查看更多'}</span></div><div class="card cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div>
-    <div class="section-head"><h2>今日提示</h2><span>不是投资建议</span></div>
-    <div class="card"><div class="hint">${dailyLesson()}</div><div class="progress-line"><i style="width:${(state.day+1)/MAX_DAYS*100}%"></i></div><div class="hint" style="margin-top:8px">30日挑战：${state.day+1} / ${MAX_DAYS}</div></div>`;
+  const market=state.currentMarket,news=market.news,date=currentDate(),watch=state.watchlist.map(fundById).filter(Boolean).slice(0,5),top=[...state.funds].sort((a,b)=>b.estimate-a.estimate).slice(0,4),mission=homeMission();
+  const profile=state.experience==='new'?['🌱','新手模式','术语解释更多，基金猫会主动提醒']:state.experience==='some'?['🙂','进阶模式','保留关键提示，减少重复教学']:['😎','老基民模式','默认基金页，信息密度更高'];
+  const coachSection=state.experience==='pro'?'':`<div class="section-head"><h2>基金猫提醒</h2><span>${state.experience==='new'?'新手讲解已开启':'只保留关键提醒'}</span></div><div class="card cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div>`;
+  const lessonSection=state.experience==='new'?`<div class="section-head"><h2>今日提示</h2><span>不是投资建议</span></div><div class="card"><div class="hint">${dailyLesson()}</div><div class="progress-line"><i style="width:${(state.day+1)/MAX_DAYS*100}%"></i></div><div class="hint" style="margin-top:8px">30日挑战：${state.day+1} / ${MAX_DAYS}</div></div>`:'';
+  $('#page-home').innerHTML=`<div class="home-mission"><div class="mission-kicker">TODAY'S MISSION</div><div class="mission-title">${mission.title}</div><div class="mission-sub">${mission.sub}</div><div class="mission-pills"><span>${dateLabel(date)}</span><span>${STAGE_LABELS[state.stage]}</span><span>${news.sentiment}</span></div><div class="experience-badge">${profile[0]} ${profile[1]}</div></div>
+  <div class="hero"><div class="eyebrow">账户总资产 · ${dateLabel(date)}</div><div class="hero-row"><div class="asset number-roll" data-roll="totalAsset" data-value="${totalAsset()}" data-format="money">${fmtMoney(totalAsset())}</div><div class="return ${cls(totalReturn())} number-roll" data-roll="totalReturn" data-value="${totalReturn()}" data-format="pct">${fmtPct(totalReturn())}</div></div><div class="hero-stats"><div class="mini"><span>可用现金</span><b class="number-roll" data-roll="cash" data-value="${state.cash}" data-format="money">${fmtMoney(state.cash)}</b></div><div class="mini"><span>持仓市值</span><b class="number-roll" data-roll="holdingsValue" data-value="${holdingsValue()}" data-format="money">${fmtMoney(holdingsValue())}</b></div><div class="mini"><span>当前心态</span><b>${mood()}</b></div></div><div class="market-clock"><div class="clock-orb">${state.stage<3?'🕒':'🌙'}</div><div><h3>${STAGE_LABELS[state.stage]}</h3><p>${clockHint()}</p></div><div class="clock-actions"><button class="advance" data-action="advance">${advanceLabel()}</button>${state.stage<4?'<button class="fast-close" data-action="fast-close">直接到收盘</button>':''}</div></div></div>
+  <div class="news-card" data-action="open-news"><div class="news-top"><div class="tag">TODAY'S MARKET</div><div class="sentiment">${news.sentiment}</div></div><h3>${news.icon} ${news.title}</h3><p>${news.text}</p><div class="impact-pills">${Object.entries(news.impact||{}).slice(0,4).map(([k,v])=>`<span>${k} ${v>0?'偏利好':'偏利空'}</span>`).join('')||'<span>全市场情绪事件</span>'}</div></div>
+  <div class="quick-actions"><button data-page="news"><span>📰</span>新闻中心</button><button data-page="achievements"><span>🏆</span>成就彩蛋</button><button data-action="show-trades"><span>🧾</span>交易记录</button>${state.experience==='new'?'<button data-action="learn"><span>🌱</span>基金入门</button>':'<button data-page="calendar"><span>📅</span>今日复盘</button>'}</div>
+  <div class="profile-note">${profile[2]}</div><div class="section-head"><h2>${watch.length?'我的自选':'盘中热度'}</h2><button data-page="market">查看全部 →</button></div><div class="fund-list">${(watch.length?watch:top).map(fundRowHTML).join('')}</div>${coachSection}${lessonSection}`;
 }
 function clockHint(){
   if(state.stage<2)return '盘中涨跌为估算值，最终净值将在 15:00 后揭晓。';
@@ -553,7 +605,7 @@ function advanceLabel(){return state.stage===4?(state.day>=MAX_DAYS-1?'查看结
 function dailyLesson(){
   const arr=['同一板块的不同基金，也会因为持仓、现金仓位和集中度而涨跌不同。','15:00 是场外基金订单归属交易日的重要分界线。','A/C 类不只看字母：申购费、销售服务费和持有期限赎回费阶梯要一起算。','消息利好不等于价格上涨，预期可能已经提前被交易。','真正的分散不是多买几个名字，而是减少同一风险来源。'];return arr[state.day%arr.length];
 }
-function fundRowHTML(f){const est=estimateForFund(f);return `<div class="fund-row" style="--accent:${f.accent}" data-fund="${f.id}"><div><div class="fund-name">${f.icon} ${f.name}</div><div class="fund-sub">${f.code} · ${f.sector} · ${f.manager} · 风险${f.risk}/5</div></div><div class="fund-right"><div class="fund-change ${cls(est)}">${fmtPct(est)}</div><div class="fund-est">${state.currentMarket.closed?'最终净值':'盘中估算'} · ${f.navA.toFixed(4)} <button class="watch" data-watch="${f.id}">${state.watchlist.includes(f.id)?'★':'☆'}</button></div></div></div>`}
+function fundRowHTML(f){const est=estimateForFund(f);const sub=state.experience==='new'?`${f.code} · ${f.sector} · 风险${f.risk}/5`:state.experience==='some'?`${f.code} · ${f.sector} · ${f.manager} · 风险${f.risk}/5`:`${f.code} · ${f.manager} · 估值${f.valuation.toFixed(0)}% · 集中度${(f.concentration*100).toFixed(0)}% · 现金${(f.cashRatio*100).toFixed(0)}%`;return `<div class="fund-row" style="--accent:${f.accent}" data-fund="${f.id}"><div><div class="fund-name">${f.icon} ${f.name}</div><div class="fund-sub">${sub}</div></div><div class="fund-right"><div class="fund-change ${cls(est)}">${fmtPct(est)}</div><div class="fund-est">${state.currentMarket.closed?'最终净值':'盘中估算'} · ${f.navA.toFixed(4)} <button class="watch" data-watch="${f.id}">${state.watchlist.includes(f.id)?'★':'☆'}</button></div></div></div>`}
 function renderMarket(){
   const sectors=['全部','自选',...Object.keys(SECTORS)];let list=state.funds;
   if(state.activeSector==='自选')list=list.filter(f=>state.watchlist.includes(f.id));else if(state.activeSector!=='全部')list=list.filter(f=>f.sector===state.activeSector);
@@ -564,10 +616,11 @@ function renderHoldings(){
   const hs=allHoldings().sort((a,b)=>holdingValue(b)-holdingValue(a));
   $('#page-holdings').innerHTML=`<div class="section-head"><h2>我的持有</h2><span>${hs.length} 个份额类别</span></div>${hs.length?hs.map(holdingHTML).join(''):'<div class="card empty-state">还没有确认持仓。买入订单会在收盘定价、下一交易日确认。</div>'}<div class="section-head"><h2>组合诊断</h2><span>实时</span></div><div class="card">${portfolioInsights()}</div>`;
 }
-function nextFeeHint(days,f,shareClass){const rules=feeConfig(f,shareClass).redemption;const current=redemptionStep(days,f,shareClass);const index=rules.indexOf(current);const next=rules[index+1];if(!next)return '已经处于最低费率档。';const threshold=Number.isFinite(current.lt)?current.lt:null;return threshold?`再持有 ${Math.max(0,threshold-days)} 天，费率可能降至 ${(next.rate*100).toFixed(2)}%。`:'已经处于最低费率档。'}
+function nextFeeHint(days,f,shareClass){const rules=feeConfig(f,shareClass).redemption,current=redemptionStep(days,f,shareClass),index=rules.indexOf(current),next=rules[index+1];if(!next)return '已经处于最低费率档。';const threshold=Number.isFinite(current.lt)?current.lt:null;return threshold?`再持有 ${Math.max(0,threshold-days)} 个自然日，这批份额费率可能降至 ${(next.rate*100).toFixed(2)}%。`:'已经处于最低费率档。'}
 function holdingHTML(h){
-  const f=fundById(h.fundId),val=holdingValue(h),pnl=val-h.costAmount,rate=h.costAmount?pnl/h.costAmount*100:0,dayPnl=val*(f.change/100)/(1+f.change/100),days=holdingDays(h),avail=availableUnits(h);
-  return `<div class="holding"><div class="holding-top"><div><div class="holding-title">${f.icon} ${f.name}<span class="class-chip">${h.shareClass}类</span></div><div class="holding-code">${f.code} · ${f.sector} · 持有${days}天</div></div><div class="holding-pnl"><b class="${cls(pnl)} number-roll" data-roll="holding-${h.fundId}-${h.shareClass}-pnl" data-value="${pnl}" data-format="money">${pnl>=0?'+':''}${fmtMoney(pnl)}</b><small class="${cls(rate)}">${fmtPct(rate)}</small></div></div><div class="holding-grid"><div class="hcell"><span>持有市值</span><b>${fmtMoney(val)}</b></div><div class="hcell"><span>持仓成本</span><b>${fmtMoney(h.costAmount)}</b></div><div class="hcell"><span>当日收益</span><b class="${cls(dayPnl)}">${dayPnl>=0?'+':''}${fmtMoney(dayPnl)}</b></div><div class="hcell"><span>成本净值</span><b>${(h.costAmount/h.units).toFixed(4)}</b></div><div class="hcell"><span>当前净值</span><b>${classNav(f,h.shareClass).toFixed(4)}</b></div><div class="hcell"><span>可卖份额</span><b>${avail.toFixed(2)}</b></div></div><div class="beginner-note">🐱 当前赎回费 ${(redemptionRate(days,f,h.shareClass)*100).toFixed(2)}%；${nextFeeHint(days,f,h.shareClass)}</div><div class="holding-actions"><button class="buy-btn" data-fund="${f.id}" data-mode="buy">继续买入</button><button class="sell-btn" data-fund="${f.id}" data-mode="sell" data-class="${h.shareClass}">快捷卖出</button></div></div>`;
+  const f=fundById(h.fundId),val=holdingValue(h),pnl=val-h.costAmount,rate=h.costAmount?pnl/h.costAmount*100:0,dayPnl=val*(f.change/100)/(1+f.change/100),avail=availableUnits(h),age=holdingAgeSummary(h),preview=previewSellLots(h,avail,f);
+  const ageText=age.count>1?`${age.count}批 · 最早${age.oldest}天 / 最新${age.newest}天`:`持有${age.oldest}个自然日`;
+  return `<div class="holding"><div class="holding-top"><div><div class="holding-title">${f.icon} ${f.name}<span class="class-chip">${h.shareClass}类</span></div><div class="holding-code">${f.code} · ${f.sector} · ${ageText}</div></div><div class="holding-pnl"><b class="${cls(pnl)} number-roll" data-roll="holding-${h.fundId}-${h.shareClass}-pnl" data-value="${pnl}" data-format="money">${pnl>=0?'+':''}${fmtMoney(pnl)}</b><small class="${cls(rate)}">${fmtPct(rate)}</small></div></div><div class="holding-grid"><div class="hcell"><span>持有市值</span><b>${fmtMoney(val)}</b></div><div class="hcell"><span>持仓成本</span><b>${fmtMoney(h.costAmount)}</b></div><div class="hcell"><span>当日收益</span><b class="${cls(dayPnl)}">${dayPnl>=0?'+':''}${fmtMoney(dayPnl)}</b></div><div class="hcell"><span>成本净值</span><b>${(h.costAmount/h.units).toFixed(4)}</b></div><div class="hcell"><span>当前净值</span><b>${classNav(f,h.shareClass).toFixed(4)}</b></div><div class="hcell"><span>可卖份额</span><b>${avail.toFixed(2)}</b></div></div><div class="beginner-note">🐱 若现在全部卖出，按分批自然日计算的预计综合赎回费率为 ${(preview.weightedRate*100).toFixed(2)}%。</div>${lotSummaryHTML(h,f,avail)}<div class="holding-actions"><button class="buy-btn" data-fund="${f.id}" data-mode="buy">继续买入</button><button class="sell-btn" data-fund="${f.id}" data-mode="sell" data-class="${h.shareClass}">快捷卖出</button></div></div>`;
 }
 function portfolioInsights(){
   const hs=allHoldings();if(!hs.length)return '<div class="hint">先从看得懂的基金开始，小额试错比一次梭哈更适合学习。</div>';
@@ -588,7 +641,7 @@ function renderOrders(){
   $('#page-orders').innerHTML=`<div class="section-head"><h2>在途订单</h2><span>${active.length} 笔</span></div>${active.length?active.map(orderHTML).join(''):'<div class="card empty-state">没有在途订单。15:00 前的已提交订单可以撤销。</div>'}<div class="section-head"><h2>历史订单</h2><span>${history.length} 笔</span></div>${history.length?history.slice(0,30).map(orderHTML).join(''):'<div class="card empty-state">还没有历史订单。</div>'}`;
 }
 function orderStatus(o){const m={submitted:'已提交',priced:o.type==='buy'?'待确认份额':'到账中',settling:'到账中',confirmed:'已确认',settled:'已到账',cancelled:'已撤销'};return m[o.status]||o.status}
-function orderHTML(o){const f=fundById(o.fundId);const can=orderCanCancel(o);const amount=o.type==='buy'?o.amount:(o.proceeds||o.amount);return `<div class="order"><div class="order-head"><div class="order-title">${o.type==='buy'?'买入':'卖出'} · ${f.name} ${o.shareClass}类</div><div class="status ${['submitted','priced','settling'].includes(o.status)?'pending':o.status==='cancelled'?'cancel':'done'}">${orderStatus(o)}</div></div><div class="order-meta"><div><span>${o.type==='buy'?'申请金额':'预计金额'}</span><b>${fmtMoney(amount)}</b></div><div><span>生效交易日</span><b>${state.dates[o.effectiveDay]?.slice(5)||'-'}</b></div><div><span>费用</span><b>${fmtMoney(o.fee||0)}</b></div></div><div class="order-time">${o.createdAt} 提交<br>${o.status==='submitted'?(o.effectiveDay===state.day?'等待今日15:00定价':'预约下一交易日受理'):(o.pricedAt||o.cancelledAt||o.confirmedAt||o.settledAt||'')}</div>${can?`<button class="cancel-order" data-cancel="${o.id}">撤销订单</button>`:''}</div>`}
+function orderHTML(o){const f=fundById(o.fundId),can=orderCanCancel(o),amount=o.type==='buy'?o.amount:(o.proceeds||o.amount);return `<div class="order"><div class="order-head"><div class="order-title">${o.type==='buy'?'买入':'卖出'} · ${f.name} ${o.shareClass}类</div><div class="status ${['submitted','priced','settling'].includes(o.status)?'pending':o.status==='cancelled'?'cancel':'done'}">${orderStatus(o)}</div></div><div class="order-meta"><div><span>${o.type==='buy'?'申请金额':'预计金额'}</span><b>${fmtMoney(amount)}</b></div><div><span>生效交易日</span><b>${state.dates[o.effectiveDay]?.slice(5)||'-'}</b></div><div><span>费用</span><b>${fmtMoney(o.fee||o.feePreview||0)}</b></div></div>${o.reason?`<div class="profile-note">买入理由：${BUY_REASONS[o.reason]||o.reason}${o.decisionReview?` · 猫猫评分 ${o.decisionReview.score}`:''}</div>`:''}<div class="order-time">${o.createdAt} 提交<br>${o.status==='submitted'?(o.effectiveDay===state.day?'等待今日15:00定价':'预约下一交易日受理'):(o.pricedAt||o.cancelledAt||o.confirmedAt||o.settledAt||'')}</div>${can?`<button class="cancel-order" data-cancel="${o.id}">撤销订单</button>`:''}</div>`}
 function renderNews(){
   const list=[...state.newsHistory].reverse();
   $('#page-news').innerHTML=`<div class="section-head"><h2>新闻中心</h2><span>预期不等于结果</span></div>${list.map((n,i)=>`<div class="news-card"><div class="news-top"><div class="tag">${dateLabel(n.date)}</div><div class="sentiment">${n.news.sentiment}</div></div><h3>${n.news.icon} ${n.news.title}</h3><p>${n.news.text}</p>${n.sectorReturns?`<div class="impact-pills">${Object.entries(n.sectorReturns).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,4).map(([s,v])=>`<span class="${cls(v)}">${s} ${fmtPct(v)}</span>`).join('')}</div>`:'<div class="impact-pills"><span>等待收盘验证</span></div>'}</div>`).join('')}`;
@@ -611,37 +664,37 @@ function openFund(fid,mode='buy',preferredClass='A'){
 function renderTradePane(fid,mode,preferredClass='A'){
   const f=fundById(fid),pane=$('#tradePane');if(!pane)return;
   if(mode==='buy'){
-    const a=feeConfig(f,'A'),c=feeConfig(f,'C');pane.innerHTML=`<div class="share-select"><button class="share-option ${preferredClass==='A'?'active':''}" data-share="A"><b>A 类</b><p>申购费 ${(a.purchase*100).toFixed(2)}%，无销售服务费</p></button><button class="share-option ${preferredClass==='C'?'active':''}" data-share="C"><b>C 类</b><p>0申购费，销售服务费 ${(c.service*100).toFixed(2)}%/年</p></button></div><div class="amount-box"><label>买入金额 · 可用 ${fmtMoney(state.cash)}</label><input id="tradeAmount" type="number" inputmode="decimal" placeholder="1000" value="1000" /></div><div class="quick-amounts"><button data-amount="1000">¥1,000</button><button data-amount="3000">¥3,000</button><button data-amount="10000">¥10,000</button><button data-amount="all">全部</button></div><div class="fee-plan"><div class="fee-plan-head"><span>预计持有时间</span><b><span id="planDaysLabel">20</span> 天</b></div><input class="range" id="planDays" type="range" min="1" max="365" value="20"/><div id="feeCompare"></div></div>${state.beginnerMode?'<div class="beginner-note">🐱 A/C 类的投资方向相同，差别主要在费用。别只看申购费，还要看计划持有多久以及这只基金自己的赎回费阶梯。</div>':''}<div class="hint warning" id="tradeHint" style="margin-top:10px">${tradeTimingText('buy')}</div><button class="primary" data-submit-buy="${fid}" data-class="${preferredClass}">提交买入订单</button>`;setTimeout(()=>updateFeeCompare(fid),0);
+    const a=feeConfig(f,'A'),c=feeConfig(f,'C');pane.innerHTML=`<div class="share-select"><button class="share-option ${preferredClass==='A'?'active':''}" data-share="A"><b>A 类</b><p>申购费 ${(a.purchase*100).toFixed(2)}%，无销售服务费</p></button><button class="share-option ${preferredClass==='C'?'active':''}" data-share="C"><b>C 类</b><p>0申购费，销售服务费 ${(c.service*100).toFixed(2)}%/年</p></button></div><div class="amount-box"><label>买入金额 · 可用 ${fmtMoney(state.cash)}</label><input id="tradeAmount" type="number" inputmode="decimal" placeholder="1000" value="1000" /></div><div class="quick-amounts"><button data-amount="1000">¥1,000</button><button data-amount="3000">¥3,000</button><button data-amount="10000">¥10,000</button><button data-amount="all">全部</button></div><div class="reason-box"><label for="buyReason">为什么买？</label><select id="buyReason"><option value="">请选择你的真实理由</option>${Object.entries(BUY_REASONS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div><div class="fee-plan"><div class="fee-plan-head"><span>预计持有时间</span><b><span id="planDaysLabel">20</span> 天</b></div><input class="range" id="planDays" type="range" min="1" max="365" value="20"/><div id="feeCompare"></div></div>${state.experience==='new'||state.beginnerMode?'<div class="beginner-note">🐱 A/C 类的投资方向相同，差别主要在费用。别只看申购费，还要看计划持有多久以及这只基金自己的赎回费阶梯。</div>':''}<div class="hint warning" id="tradeHint" style="margin-top:10px">${tradeTimingText('buy')}</div><button class="primary" data-submit-buy="${fid}" data-class="${preferredClass}">提交买入订单</button>`;setTimeout(()=>updateFeeCompare(fid),0);
   }else{
     const holdings=['A','C'].map(c=>getHolding(fid,c)).filter(Boolean);if(!holdings.length){pane.innerHTML='<div class="empty-state">没有已确认持仓，暂时不能卖出。</div>';return}
-    let c=holdings.some(h=>h.shareClass===preferredClass)?preferredClass:holdings[0].shareClass;const h=getHolding(fid,c),avail=availableUnits(h),days=holdingDays(h),rate=redemptionRate(days,f,c);
-    pane.innerHTML=`<div class="share-select">${holdings.map(x=>`<button class="share-option ${x.shareClass===c?'active':''}" data-sell-class="${x.shareClass}"><b>${x.shareClass} 类持仓</b><p>${x.units.toFixed(2)}份 · 持有${holdingDays(x)}天</p></button>`).join('')}</div><div class="amount-box"><label>卖出比例 <b id="sellPct">50%</b></label><input class="range" id="sellRange" type="range" min="1" max="100" value="50"/><div class="hint" id="sellPreview">预计卖出 ${(avail*.5).toFixed(2)} 份，短期赎回费率 ${(rate*100).toFixed(2)}%</div></div><div class="quick-amounts"><button data-sell-ratio="25">25%</button><button data-sell-ratio="50">50%</button><button data-sell-ratio="75">75%</button><button data-sell-ratio="100">全部</button></div><div class="fee-plan"><div class="fee-plan-head"><span>${c}类赎回费阶梯</span><b>当前 ${(rate*100).toFixed(2)}%</b></div><div class="fee-ladder">${feeLadderHTML(f,c,days)}</div></div><div class="hint warning" style="margin-top:10px">${tradeTimingText('sell')}</div><button class="primary" data-submit-sell="${fid}" data-class="${c}">提交赎回订单</button>`;
+    let c=holdings.some(h=>h.shareClass===preferredClass)?preferredClass:holdings[0].shareClass;const h=getHolding(fid,c),avail=availableUnits(h),targetDate=state.dates[effectiveDayForNewOrder()]||currentDate(),preview=previewSellLots(h,avail*.5,f,classNav(f,c),targetDate),age=holdingAgeSummary(h,targetDate);
+    pane.innerHTML=`<div class="share-select">${holdings.map(x=>{const a=holdingAgeSummary(x,targetDate);return `<button class="share-option ${x.shareClass===c?'active':''}" data-sell-class="${x.shareClass}"><b>${x.shareClass} 类持仓</b><p>${x.units.toFixed(2)}份 · ${a.count}批 · 最早${a.oldest}自然日</p></button>`}).join('')}</div><div class="amount-box"><label>卖出比例 <b id="sellPct">50%</b></label><input class="range" id="sellRange" type="range" min="1" max="100" value="50"/><div class="hint" id="sellPreview">预计卖出 ${(avail*.5).toFixed(2)} 份，综合费率 ${(preview.weightedRate*100).toFixed(2)}%，预计到账 ${fmtMoney(preview.proceeds)}</div></div><div class="quick-amounts"><button data-sell-ratio="25">25%</button><button data-sell-ratio="50">50%</button><button data-sell-ratio="75">75%</button><button data-sell-ratio="100">全部</button></div>${lotSummaryHTML(h,f,avail*.5)}<div class="fee-plan"><div class="fee-plan-head"><span>${c}类赎回费阶梯</span><b>各批分别计算</b></div><div class="fee-ladder">${feeLadderHTML(f,c,age.oldest)}</div></div><div class="hint warning" style="margin-top:10px">${tradeTimingText('sell')}</div><button class="primary" data-submit-sell="${fid}" data-class="${c}">提交赎回订单</button>`;
   }
 }
 function updateFeeCompare(fid){const f=fundById(fid),amount=Number($('#tradeAmount')?.value||1000),days=Number($('#planDays')?.value||20),box=$('#feeCompare');if(!box)return;$('#planDaysLabel').textContent=days;const a=estimatedClassCost(f,'A',amount,days),c=estimatedClassCost(f,'C',amount,days),best=a.total<=c.total?'A':'C';box.innerHTML=`<div class="fee-compare"><div class="fee-box ${best==='A'?'best':''}"><b>A 类预计总费用</b><strong>${fmtMoney(a.total)}</strong><small>申购 ${fmtMoney(a.purchase)} · 服务 ${fmtMoney(a.service)} · 赎回 ${fmtMoney(a.redemption)}</small></div><div class="fee-box ${best==='C'?'best':''}"><b>C 类预计总费用</b><strong>${fmtMoney(c.total)}</strong><small>申购 ${fmtMoney(c.purchase)} · 服务 ${fmtMoney(c.service)} · 赎回 ${fmtMoney(c.redemption)}</small></div></div><div class="hint" style="margin-top:8px">🐱 按当前金额和持有计划，${best} 类预计少花 ${fmtMoney(Math.abs(a.total-c.total))}。这只是模拟估算，真正下单要看具体产品费率表。</div>`}
 function openLearning(term){const terms={estimate:['盘中估算','根据板块和模拟持仓推算的实时涨跌，不是最终净值。15:00 后才揭晓。'],drawdown:['最大回撤','历史高点到后来最低点，曾经最多跌了多少。它是在问：最难熬的时候有多难熬？'],valuation:['估值百分位','当前估值在自身模拟历史中所处的位置。80%表示比过去大约80%的时候更贵，但不代表马上会跌。'],ac:['A/C 类','投资方向通常相同，费用收法不同。A常见申购费，C常见销售服务费；两类还可能有不同的赎回费阶梯。'],t1:['T+1 与15:00','15:00前提交，通常按当天收盘净值定价；15:00后顺延到下一交易日。份额确认和资金到账还需要时间。']};const [title,text]=terms[term]||['基金猫课堂','慢慢玩，规则会一点点认识。'];openModal(`<div class="modal-head"><div><h2>🐱 ${title}</h2><p>基金猫的一句话翻译</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${text}</div></div>`)}
-function openCat(){state.catSeen++;$('#catDot').textContent=Math.max(0,3-state.catSeen);$('#catDot').style.display=state.catSeen>=3?'none':'grid';openModal(`<div class="modal-head"><div><h2>🐱 基金猫</h2><p>不替你做决定，只负责在你上头时挠一下。</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div><div class="coach-toggle"><span>新手讲解模式</span><input type="checkbox" id="coachToggle" ${state.beginnerMode?'checked':''}></div><div class="cat-actions"><button data-term="ac">A/C类怎么选</button><button data-term="t1">三点和T+1</button><button data-term="drawdown">什么是回撤</button><button data-action="learn">打开入门课</button></div>`,()=>save())}
+function openCat(){state.catSeen++;state.catClicks=(state.catClicks||0)+1;if(state.catClicks>=9)unlock('cat_staff');$('#catDot').textContent=Math.max(0,3-state.catSeen);$('#catDot').style.display=state.catSeen>=3?'none':'grid';openModal(`<div class="modal-head"><div><h2>🐱 基金猫</h2><p>不替你做决定，只负责在你上头时挠一下。</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div><div class="coach-toggle"><span>新手讲解模式</span><input type="checkbox" id="coachToggle" ${state.beginnerMode?'checked':''}></div><div class="cat-actions"><button data-term="ac">A/C类怎么选</button><button data-term="t1">三点和T+1</button><button data-term="drawdown">什么是回撤</button><button data-action="learn">打开入门课</button></div>`,()=>save())}
 function openLearningCenter(){openModal(`<div class="modal-head"><div><h2>🌱 基金入门</h2><p>不会也没关系，先记住五件事。</p></div><button class="close" data-close>✕</button></div><div class="lesson"><b>1. 基金买入不会立刻出现份额</b><p>订单先提交，收盘按净值定价，之后再确认。</p></div><div class="lesson"><b>2. 15:00 是重要分界线</b><p>三点前通常属于今天，三点后通常顺延到下一交易日。</p></div><div class="lesson"><b>3. A/C 类主要差在费用</b><p>结合申购费、销售服务费、赎回费阶梯和持有时间一起算。</p></div><div class="lesson"><b>4. 涨得多的基金也可能更难拿住</b><p>收益和波动是一对绑定出售的东西。</p></div><div class="lesson"><b>5. 新闻利好不保证上涨</b><p>价格可能早已反映预期，资金也可能借利好兑现。</p></div>`)}
 function tradeTimingText(type){const eff=effectiveDayForNewOrder(),f=state.dates[eff];if(state.stage<3)return `当前 ${currentTime()}：订单按今日收盘净值定价，15:00 前可撤单。`;return `当前已过 15:00：订单将于 ${f?dateLabel(f):'下一交易日'} 受理，在该日 15:00 前仍可撤单。`}
-function openRecord(day){const r=state.records.find(x=>x.day===day);if(!r)return;const top=fundById(r.top.id),worst=fundById(r.worst.id);openModal(`<div class="modal-head"><div><h2>${dateLabel(r.date)} 复盘</h2><p>${r.news}</p></div><button class="close" data-close>✕</button></div><div class="metric-row"><div class="metric"><span>当日收益</span><b class="${cls(r.pnl)}">${fmtMoney(r.pnl)}</b></div><div class="metric"><span>收益率</span><b class="${cls(r.rate)}">${fmtPct(r.rate)}</b></div><div class="metric"><span>最强基金</span><b>${top.name}</b></div><div class="metric"><span>最弱基金</span><b>${worst.name}</b></div></div><div class="divider"></div><div class="hint">当日订单：${r.orders.length?r.orders.map(o=>`${o.type==='buy'?'买入':'卖出'} ${fundById(o.fundId).name}${o.shareClass}`).join('；'):'没有交易。少做也可能是好决策。'}</div>`)}
+function openRecord(day){const r=state.records.find(x=>x.day===day);if(!r)return;const top=fundById(r.top.id),worst=fundById(r.worst.id);openModal(`<div class="modal-head"><div><h2>${dateLabel(r.date)} 复盘</h2><p>${r.news}</p></div><button class="close" data-close>✕</button></div><div class="metric-row"><div class="metric"><span>当日收益</span><b class="${cls(r.pnl)}">${fmtMoney(r.pnl)}</b></div><div class="metric"><span>收益率</span><b class="${cls(r.rate)}">${fmtPct(r.rate)}</b></div><div class="metric"><span>最强基金</span><b>${top.name}</b></div><div class="metric"><span>最弱基金</span><b>${worst.name}</b></div></div><div class="divider"></div><div class="hint">当日订单：${r.orders.length?r.orders.map(o=>`${o.type==='buy'?'买入':'卖出'} ${fundById(o.fundId).name}${o.shareClass}${o.reason?`（${BUY_REASONS[o.reason]}）`:''}`).join('；'):'没有交易。少做也可能是好决策。'}</div><div class="divider"></div><h3>🐱 决策质量复盘</h3>${decisionReviewHTML(r.decisionReviews||[])}`)}
 function openAchievement(id){const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;const open=state.achievements.includes(id);openModal(`<div class="modal-head"><div><h2>${open?a.emoji:'🔒'} ${open?a.name:(a.hidden?'隐藏成就':a.name)}</h2><p>${open?'已经解锁':'还没有解锁'}</p></div><button class="close" data-close>✕</button></div><div class="card"><div class="hint"><b>解锁条件</b><br>${open||!a.hidden?a.condition:'条件暂时保密，彩蛋要自己撞见才好玩。'}</div><div class="divider"></div><div class="hint"><b>当前进度</b><br>${achievementProgress(a)}</div>${open?`<div class="divider"></div><div class="hint"><b>系统吐槽</b><br>${a.roast}</div><div class="divider"></div><div class="hint"><b>留下的教训</b><br>${a.lesson}</div>`:''}</div>`)}
 function showTrades(){setPage('orders')}
 function openEnding(){const e=state.ending;openModal(`<div style="text-align:center"><div style="font-size:56px">${e.emoji}</div><h2>${e.type}</h2><p>${e.text}</p></div><div class="metric-row"><div class="metric"><span>最终资产</span><b>${fmtMoney(e.asset)}</b></div><div class="metric"><span>总收益率</span><b class="${cls(e.return)}">${fmtPct(e.return)}</b></div><div class="metric"><span>累计费用</span><b>${fmtMoney(e.fees)}</b></div><div class="metric"><span>解锁成就</span><b>${e.achievements}</b></div></div><button class="secondary" data-action="reset-game">重新挑战</button>`)}
 function openModal(html,after){$('#modal').innerHTML=html;$('#modalWrap').classList.add('show');$('#modalWrap').setAttribute('aria-hidden','false');after?.()}
 function closeModal(){$('#modalWrap').classList.remove('show');$('#modalWrap').setAttribute('aria-hidden','true')}
 function setPage(page,scroll=true){state.currentPage=page;$$('.page').forEach(p=>p.classList.add('hidden'));$(`#page-${page}`).classList.remove('hidden');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===page));if(scroll)window.scrollTo({top:0,behavior:'smooth'});save()}
-function resetGame(){if(!confirm('重新开始会清空 V6 的持仓、订单和成就，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
+function resetGame(){if(!confirm('重新开始会清空 V6.1 的持仓、订单和成就，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
 
 function bindEvents(){
   document.addEventListener('click',e=>{
-    const exp=e.target.closest('[data-experience]');if(exp){state.experience=exp.dataset.experience;state.beginnerMode=state.experience==='new';$$('[data-experience]').forEach(x=>x.classList.toggle('active',x===exp));return}
+    const exp=e.target.closest('[data-experience]');if(exp){state.experience=exp.dataset.experience;state.beginnerMode=state.experience==='new';applyExperience();$$('[data-experience]').forEach(x=>x.classList.toggle('active',x===exp));return}
     const nav=e.target.closest('[data-nav]');if(nav)return setPage(nav.dataset.nav);
     if(e.target.closest('#themeBtn'))return toggleTheme();
     if(e.target.closest('#catBtn'))return openCat();
     const term=e.target.closest('[data-term]');if(term)return openLearning(term.dataset.term);
     if(e.target.closest('[data-action="learn"]'))return openLearningCenter();
     const page=e.target.closest('[data-page]');if(page)return setPage(page.dataset.page);
-    const adv=e.target.closest('[data-action="advance"]');if(adv)return advanceTime();
+    const adv=e.target.closest('[data-action="advance"]');if(adv)return advanceTime();if(e.target.closest('[data-action="fast-close"]'))return fastClose();if(e.target.closest('[data-action="confirm-fast-close"]')){closeModal();return performFastClose()}if(e.target.closest('[data-action="review-orders"]')){closeModal();return setPage('orders')}
     const fund=e.target.closest('[data-fund]');if(fund&&!e.target.closest('[data-watch]'))return openFund(fund.dataset.fund,fund.dataset.mode||'buy',fund.dataset.class||'A');
     const watch=e.target.closest('[data-watch]');if(watch){e.stopPropagation();const id=watch.dataset.watch;state.watchlist=state.watchlist.includes(id)?state.watchlist.filter(x=>x!==id):[...state.watchlist,id];renderAll();return}
     const sec=e.target.closest('[data-sector]');if(sec){state.activeSector=sec.dataset.sector;renderMarket();return}
@@ -655,7 +708,7 @@ function bindEvents(){
     const sellClass=e.target.closest('[data-sell-class]');if(sellClass){renderTradePane(state.__modalFund,'sell',sellClass.dataset.sellClass);return}
     const amt=e.target.closest('[data-amount]');if(amt){const input=$('#tradeAmount');if(input)input.value=amt.dataset.amount==='all'?Math.floor(state.cash):amt.dataset.amount;return}
     const sr=e.target.closest('[data-sell-ratio]');if(sr){const range=$('#sellRange');if(range){range.value=sr.dataset.sellRatio;range.dispatchEvent(new Event('input',{bubbles:true}))}return}
-    const buy=e.target.closest('[data-submit-buy]');if(buy){return submitBuy(buy.dataset.submitBuy,buy.dataset.class,$('#tradeAmount')?.value)}
+    const buy=e.target.closest('[data-submit-buy]');if(buy){return submitBuy(buy.dataset.submitBuy,buy.dataset.class,$('#tradeAmount')?.value,$('#buyReason')?.value,Number($('#planDays')?.value||20))}
     const sell=e.target.closest('[data-submit-sell]');if(sell){return submitSell(sell.dataset.submitSell,sell.dataset.class,Number($('#sellRange')?.value||50)/100)}
     if(e.target.closest('[data-action="show-trades"]'))return showTrades();
     if(e.target.closest('[data-action="reset-game"]'))return resetGame();
@@ -665,12 +718,12 @@ function bindEvents(){
     if(e.target.id==='planDays'||e.target.id==='tradeAmount'){if(state.__modalFund)updateFeeCompare(state.__modalFund)}
     if(e.target.id==='coachToggle'){state.beginnerMode=e.target.checked;save()}
     if(e.target.id==='sellRange'){
-      const pct=Number(e.target.value),btn=$('[data-submit-sell]');if(!btn)return;const h=getHolding(btn.dataset.submitSell,btn.dataset.class),f=fundById(btn.dataset.submitSell);if(!h)return;const units=availableUnits(h)*pct/100,days=holdingDays(h),rate=redemptionRate(days,f,h.shareClass),gross=units*classNav(f,h.shareClass);$('#sellPct').textContent=pct+'%';$('#sellPreview').textContent=`预计卖出 ${units.toFixed(2)} 份，费率 ${(rate*100).toFixed(2)}%，预计到账 ${fmtMoney(gross*(1-rate))}`;
+      const pct=Number(e.target.value),btn=$('[data-submit-sell]');if(!btn)return;const h=getHolding(btn.dataset.submitSell,btn.dataset.class),f=fundById(btn.dataset.submitSell);if(!h)return;const units=availableUnits(h)*pct/100,preview=previewSellLots(h,units,f,classNav(f,h.shareClass),state.dates[effectiveDayForNewOrder()]||currentDate());$('#sellPct').textContent=pct+'%';$('#sellPreview').textContent=`预计卖出 ${units.toFixed(2)} 份，综合费率 ${(preview.weightedRate*100).toFixed(2)}%，预计到账 ${fmtMoney(preview.proceeds)}`;
     }
   });
   $('#modalWrap').addEventListener('click',e=>{if(e.target===$('#modalWrap'))closeModal()});
   $('#feedbackClose').addEventListener('click',closeFeedback);$('#feedback').addEventListener('click',e=>{if(e.target===$('#feedback'))closeFeedback()});
-  $('#startBtn').addEventListener('click',()=>{state.started=true;$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save();if(state.beginnerMode)setTimeout(()=>showFeedback('🐱','基金猫上班啦！',['新手讲解已开启','看不懂的词可以点问号。','先用小额熟悉规则。'],false),260)});
+  $('#startBtn').addEventListener('click',()=>{state.started=true;applyExperience();state.currentPage=state.experience==='pro'?'market':'home';$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save();if(state.experience==='new')setTimeout(()=>showFeedback('🐱','基金猫上班啦！',['新手讲解已开启','看不懂的词可以点问号。','先用小额熟悉规则。'],false),260);else if(state.experience==='some')setTimeout(()=>toast('进阶模式：只保留关键提醒'),260)});
   $('#bellBtn').addEventListener('click',()=>{state.bellClicks++;if(state.bellClicks>=7)unlock('moon')});
   $('#brandEaster').addEventListener('click',()=>{state.brandClicks++;if(state.brandClicks>=7){unlock('moon');renderAchievements();save()}});
   $('#clockBtn').addEventListener('click',()=>openModal(`<div class="modal-head"><div><h2>交易时钟</h2><p>${dateLabel(currentDate())} ${currentTime()}</p></div><button class="close" data-close>✕</button></div><div class="timeline"><div class="timeline-item"><i></i><div><b>15:00 前</b><p>按当日收盘净值定价，可在截止前撤单。</p></div></div><div class="timeline-item"><i></i><div><b>15:00 及以后</b><p>订单顺延到下一交易日，按下一交易日净值定价。</p></div></div><div class="timeline-item"><i></i><div><b>下一交易日</b><p>买入份额确认；赎回资金根据基金类型继续等待到账。</p></div></div></div><div class="hint">本游戏采用简化模拟。真实产品的确认时间、到账时间与费用以基金合同和销售平台规则为准。</div>`));
