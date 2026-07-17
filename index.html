@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark" data-experience="new"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" /><meta name="theme-color" content="#090b12" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /><title>今天回本了吗？V7 模块化版</title><style>:root{
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark" data-experience="new"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" /><meta name="theme-color" content="#090b12" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /><title>今天回本了吗？V7.1 模块化版</title><style>:root{
   --bg:#080b12;--panel:#111624;--panel2:#171e2f;--panel3:#0d111c;
   --line:#283147;--text:#f5f7fb;--muted:#929cb3;--red:#ff6578;--green:#39d19a;
   --gold:#ffd36f;--blue:#78a9ff;--purple:#b98cff;--orange:#ff9a73;
@@ -65,10 +65,13 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
 @media(max-width:390px){.clock-actions{min-width:86px}.asset{font-size:31px}.market-clock{gap:8px}.reason-box select{font-size:14px}.day-val{font-size:10px!important}}
 .boot-date{margin:12px auto 2px;padding:9px 12px;border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;font-size:12px;color:var(--muted);background:var(--panel3)}
 .module-note{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
+
+/* V7.1 回撤信息 */
+.metric b{line-height:1.35}.metric-row .metric:nth-child(3) b,.metric-row .metric:nth-child(5) b{font-size:12px}.learn-chip{position:relative;z-index:2}
 </style></head><body><div id="boot" class="boot">
   <div class="boot-card">
     <button class="bell" id="bellBtn" aria-label="开盘铃">🔔</button>
-    <div class="boot-kicker">FUND LIFE SIMULATOR · V7</div>
+    <div class="boot-kicker">FUND LIFE SIMULATOR · V7.1</div>
     <h1>今天，能回本吗？</h1>
     <p>一套按照真实基金交易逻辑运转的模拟世界。<br>新闻会骗人，费用会偷吃收益，三点以后又是明天。</p>
     <div class="experience" id="experiencePick"><button data-experience="new" class="active"><span>🌱</span>完全不会</button><button data-experience="some"><span>🙂</span>知道一点</button><button data-experience="pro"><span>😎</span>老基民</button></div>
@@ -83,7 +86,7 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
   <header class="topbar">
     <div class="brand" id="brandEaster">
       <div class="brand-icon">📈</div>
-      <div><b>今天回本了吗？</b><small>模块化基金模拟器 · V7</small></div>
+      <div><b>今天回本了吗？</b><small>模块化基金模拟器 · V7.1</small></div>
     </div>
     <div class="top-actions"><button class="theme-toggle" id="themeBtn" aria-label="切换日夜模式">🌙</button><button class="clock-pill" id="clockBtn"><span id="dayLabel">DAY 1</span><b id="timeLabel">09:30</b></button></div>
   </header>
@@ -135,6 +138,18 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const round=(n,d=4)=>Number(n.toFixed(d));
   function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+  function rng(seed){let x=seed>>>0;return()=>{x=(Math.imul(1664525,x)+1013904223)>>>0;return x/4294967296}}
+  function normal(rand){let u=0,v=0;while(!u)u=rand();while(!v)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+  function historicalSeries(finalNav,f,days=90){
+    const rand=rng(hash(f.id+'-history-v71'));const vals=[1];let level=1;
+    for(let i=1;i<=days;i++){
+      const cycle=Math.sin((i+(hash(f.id)%17))/8)*f.vol*0.08;
+      const regime=i<24?0.05:i<48?-0.09:i<70?0.075:-0.025;
+      const ret=regime+cycle+normal(rand)*f.vol*0.34;
+      level=Math.max(.25,level*(1+ret/100));vals.push(level);
+    }
+    const scale=finalNav/vals.at(-1);return vals.map(v=>round(v*scale));
+  }
   const SECTORS = {
     '稳健': {color:'#7fd8c5',vol:0.45,valuation:38,icon:'🛟',stocks:['政策金融债','高等级信用债','同业存单','短久期国债']},
     '红利': {color:'#ffd36f',vol:1.45,valuation:46,icon:'🏦',stocks:['中国神华','长江电力','中国移动','工商银行']},
@@ -197,7 +212,12 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
         });
       });
     });
-    funds.forEach(f=>{f.historyA=[f.navA];f.historyC=[f.navC];const variant=f.id.split('-').at(-1);f.feeRules=buildFeeRules(f,variant)});
+    funds.forEach(f=>{
+      f.historyA=historicalSeries(f.navA,f,90);
+      const cBase=historicalSeries(f.navC,f,90),annualService=f.risk<=2?.0025:f.risk===3?.0040:.0060;
+      f.historyC=cBase.map((v,i)=>round(v*(1-annualService*i/365)));
+      const variant=f.id.split('-').at(-1);f.feeRules=buildFeeRules(f,variant)
+    });
     return funds;
   }
   root.Funds={SECTORS,VARIANTS,PREFIXES,MANAGERS,buildFeeRules,makeFunds};
@@ -278,7 +298,7 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
 </script><script>(() => {
 'use strict';
 
-const VERSION='7.0.0';
+const VERSION='7.1.0';
 const STORAGE_KEY='fund_simulator_v7';
 const INITIAL_CASH=50000;
 const MAX_DAYS=30;
@@ -316,7 +336,20 @@ function migrateState(saved){
   const fresh=initialState();
   const merged={...fresh,...saved,version:VERSION,theme:saved.theme||'dark',experience:saved.experience||'new',beginnerMode:saved.beginnerMode??(saved.experience==='new'),catSeen:saved.catSeen||0,catClicks:saved.catClicks||0,lastReview:saved.lastReview||null};
   const newFunds=makeFunds();
-  merged.funds=newFunds.map(n=>{const old=(saved.funds||[]).find(x=>x.id===n.id);return old?{...n,...old,feeRules:n.feeRules}:n});
+  const mergeHistory=(base,oldHistory,currentNav)=>{
+    const oldVals=Array.isArray(oldHistory)&&oldHistory.length?oldHistory:[currentNav];
+    if(oldVals.length>=45)return oldVals;
+    const anchor=oldVals[0]||currentNav||base.at(-1)||1,baseEnd=base.at(-1)||1;
+    const scaled=base.map(v=>round(v/baseEnd*anchor));
+    return [...scaled.slice(0,-1),...oldVals];
+  };
+  merged.funds=newFunds.map(n=>{
+    const old=(saved.funds||[]).find(x=>x.id===n.id);if(!old)return n;
+    const mergedFund={...n,...old,feeRules:n.feeRules};
+    mergedFund.historyA=mergeHistory(n.historyA,old.historyA,old.navA);
+    mergedFund.historyC=mergeHistory(n.historyC,old.historyC,old.navC);
+    return mergedFund;
+  });
   merged.stats={...fresh.stats,...(saved.stats||{}),reasons:{...(saved.stats?.reasons||{})}};
   const normalized={};
   Object.entries(merged.holdings||{}).forEach(([key,h])=>{
@@ -397,7 +430,22 @@ function lotSummaryHTML(h,f,units=availableUnits(h)){
 function settlementDays(f){if(f.sector==='海外')return 3;if(f.sector==='稳健')return 1;return 2}
 function orderCanCancel(o){return o.status==='submitted'&&(state.day<o.effectiveDay||(state.day===o.effectiveDay&&state.stage<3))}
 function effectiveDayForNewOrder(){return state.stage<3?state.day:state.day+1}
-function maxDrawdown(vals){let peak=vals[0]||1,mdd=0,peakIndex=0,lowIndex=0;vals.forEach((v,i)=>{if(v>peak){peak=v;peakIndex=i}const dd=(v/peak-1)*100;if(dd<mdd){mdd=dd;lowIndex=i}});return {mdd,days:Math.max(0,lowIndex-peakIndex)}}
+function drawdownAnalysis(vals){
+  const series=(vals||[]).filter(Number.isFinite);
+  if(series.length<2)return {mdd:0,peakIndex:0,troughIndex:0,drawdownDays:0,recoveryIndex:0,recoveryDays:0,recovered:true,status:'暂无历史回撤',currentDrawdown:0};
+  let runningPeak=series[0],runningPeakIndex=0,mdd=0,peakIndex=0,troughIndex=0;
+  series.forEach((v,i)=>{
+    if(v>runningPeak){runningPeak=v;runningPeakIndex=i}
+    const dd=(v/runningPeak-1)*100;
+    if(dd<mdd){mdd=dd;peakIndex=runningPeakIndex;troughIndex=i}
+  });
+  const peakValue=series[peakIndex];let recoveryIndex=-1;
+  for(let i=troughIndex+1;i<series.length;i++){if(series[i]>=peakValue){recoveryIndex=i;break}}
+  const recovered=recoveryIndex>=0;
+  const allTimePeak=Math.max(...series),currentDrawdown=(series.at(-1)/allTimePeak-1)*100;
+  return {mdd,peakIndex,troughIndex,drawdownDays:Math.max(0,troughIndex-peakIndex),recoveryIndex,recoveryDays:Math.max(0,(recovered?recoveryIndex:series.length-1)-troughIndex),recovered,status:mdd===0?'暂无历史回撤':recovered?'历史回撤（已修复）':'最大回撤修复中',currentDrawdown};
+}
+function maxDrawdown(vals){const d=drawdownAnalysis(vals);return {mdd:d.mdd,days:d.drawdownDays}}
 function chartSvg(vals,color){const w=300,h=96,min=Math.min(...vals),max=Math.max(...vals),span=max-min||1;const pts=vals.map((v,i)=>`${i/(Math.max(vals.length-1,1))*w},${h-((v-min)/span)*(h-12)-6}`).join(' ');return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" vector-effect="non-scaling-stroke"/><line x1="0" y1="${h/2}" x2="${w}" y2="${h/2}" stroke="#252d40" stroke-dasharray="4 4"/></svg>`}
 
 function createMarketForDay(){
@@ -459,7 +507,7 @@ function processClose(){
     f.change=r;f.navA=round(Math.max(.1,f.navA*(1+r/100)),4);
     const cService=feeConfig(f,'C').service/252;f.navC=round(Math.max(.1,f.navC*(1+r/100)*(1-cService)),4);
     f.valuation=clamp(f.valuation+r*1.15+(Math.random()-.5)*2,3,97);f.historyA.push(f.navA);f.historyC.push(f.navC);if(f.historyA.length>80){f.historyA.shift();f.historyC.shift()}
-    const dd=maxDrawdown(f.historyA);f.maxDrawdown=dd.mdd;f.drawdownDays=dd.days;
+    const dd=drawdownAnalysis(f.historyA);f.maxDrawdown=dd.mdd;f.drawdownDays=dd.drawdownDays;f.drawdownStatus=dd.status;f.recoveryDays=dd.recoveryDays;
   });
   state.orders.filter(o=>o.status==='submitted'&&o.effectiveDay===state.day).forEach(o=>{
     const f=fundById(o.fundId),nav=classNav(f,o.shareClass);
@@ -673,10 +721,10 @@ function renderAchievements(){
 }
 
 function openFund(fid,mode='buy',preferredClass='A'){
-  const f=fundById(fid);const nav=classNav(f,preferredClass),dd=maxDrawdown(f.historyA);const est=estimateForFund(f);const aFee=feeConfig(f,'A'),cFee=feeConfig(f,'C');
+  const f=fundById(fid);const nav=classNav(f,preferredClass),dd=drawdownAnalysis(f.historyA);const est=estimateForFund(f);const aFee=feeConfig(f,'A'),cFee=feeConfig(f,'C');
   openModal(`<div class="modal-head"><div><h2>${f.icon} ${f.name}</h2><p>${f.code} · ${f.sector} · ${f.manager}<br>${f.desc}</p></div><button class="close" data-close>✕</button></div>
   <div class="detail-chart">${chartSvg(f.historyA,f.accent)}</div>
-  <div class="metric-row" style="margin-top:10px"><div class="metric"><span>${state.currentMarket.closed?'今日涨跌':'盘中估算'}${state.beginnerMode?'<button class="learn-chip" data-term="estimate">?</button>':''}</span><b class="${cls(est)}">${fmtPct(est)}</b></div><div class="metric"><span>最大回撤${state.beginnerMode?'<button class="learn-chip" data-term="drawdown">?</button>':''}</span><b class="down">${fmtPct(dd.mdd)}</b></div><div class="metric"><span>估值百分位${state.beginnerMode?'<button class="learn-chip" data-term="valuation">?</button>':''}</span><b>${f.valuation.toFixed(0)}%</b></div><div class="metric"><span>现金仓位</span><b>${(f.cashRatio*100).toFixed(0)}%</b></div></div>
+  <div class="metric-row" style="margin-top:10px"><div class="metric"><span>${state.currentMarket.closed?'今日涨跌':'盘中估算'}${state.beginnerMode?'<button class="learn-chip" data-term="estimate">?</button>':''}</span><b class="${cls(est)}">${fmtPct(est)}</b></div><div class="metric"><span>最大回撤${state.beginnerMode?'<button class="learn-chip" data-term="drawdown">?</button>':''}</span><b class="down">${fmtPct(dd.mdd)}</b></div><div class="metric"><span>回撤状态</span><b class="${dd.recovered?'flat':'down'}">${dd.status}</b></div><div class="metric"><span>最大回撤形成天数</span><b>${dd.drawdownDays} 个交易日</b></div><div class="metric"><span>${dd.recovered?'回撤修复用时':'已修复时间'}</span><b>${dd.recoveryDays} 个交易日${dd.recovered?'':' · 进行中'}</b></div><div class="metric"><span>当前距历史高点</span><b class="${cls(dd.currentDrawdown)}">${fmtPct(dd.currentDrawdown)}</b></div><div class="metric"><span>估值百分位${state.beginnerMode?'<button class="learn-chip" data-term="valuation">?</button>':''}</span><b>${f.valuation.toFixed(0)}%</b></div><div class="metric"><span>现金仓位</span><b>${(f.cashRatio*100).toFixed(0)}%</b></div></div>
   <div class="valuation"><span class="hint">历史估值</span><div class="thermo"><i style="left:${f.valuation}%"></i></div><b>${f.valuation<30?'偏低':f.valuation>75?'偏高':'中性'}</b></div>
   <div class="divider"></div><div class="hint">前四大模拟持仓：${f.holdings.map(x=>`${x.name} ${(x.weight*100).toFixed(0)}%`).join(' · ')}</div>
   <div class="tabs"><button class="${mode==='buy'?'active':''}" data-trade-mode="buy">买入</button><button class="${mode==='sell'?'active':''}" data-trade-mode="sell">卖出</button></div>
@@ -693,7 +741,7 @@ function renderTradePane(fid,mode,preferredClass='A'){
   }
 }
 function updateFeeCompare(fid){const f=fundById(fid),amount=Number($('#tradeAmount')?.value||1000),days=Number($('#planDays')?.value||20),box=$('#feeCompare');if(!box)return;$('#planDaysLabel').textContent=days;const a=estimatedClassCost(f,'A',amount,days),c=estimatedClassCost(f,'C',amount,days),best=a.total<=c.total?'A':'C';box.innerHTML=`<div class="fee-compare"><div class="fee-box ${best==='A'?'best':''}"><b>A 类预计总费用</b><strong>${fmtMoney(a.total)}</strong><small>申购 ${fmtMoney(a.purchase)} · 服务 ${fmtMoney(a.service)} · 赎回 ${fmtMoney(a.redemption)}</small></div><div class="fee-box ${best==='C'?'best':''}"><b>C 类预计总费用</b><strong>${fmtMoney(c.total)}</strong><small>申购 ${fmtMoney(c.purchase)} · 服务 ${fmtMoney(c.service)} · 赎回 ${fmtMoney(c.redemption)}</small></div></div><div class="hint" style="margin-top:8px">🐱 按当前金额和持有计划，${best} 类预计少花 ${fmtMoney(Math.abs(a.total-c.total))}。这只是模拟估算，真正下单要看具体产品费率表。</div>`}
-function openLearning(term){const terms={estimate:['盘中估算','根据板块和模拟持仓推算的实时涨跌，不是最终净值。15:00 后才揭晓。'],drawdown:['最大回撤','历史高点到后来最低点，曾经最多跌了多少。它是在问：最难熬的时候有多难熬？'],valuation:['估值百分位','当前估值在自身模拟历史中所处的位置。80%表示比过去大约80%的时候更贵，但不代表马上会跌。'],ac:['A/C 类','投资方向通常相同，费用收法不同。A常见申购费，C常见销售服务费；两类还可能有不同的赎回费阶梯。'],t1:['T+1 与15:00','15:00前提交，通常按当天收盘净值定价；15:00后顺延到下一交易日。份额确认和资金到账还需要时间。']};const [title,text]=terms[term]||['基金猫课堂','慢慢玩，规则会一点点认识。'];openModal(`<div class="modal-head"><div><h2>🐱 ${title}</h2><p>基金猫的一句话翻译</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${text}</div></div>`)}
+function openLearning(term){const terms={estimate:['盘中估算','根据板块和模拟持仓推算的实时涨跌，不是最终净值。15:00 后才揭晓。'],drawdown:['最大回撤','最大回撤是历史高点到后续最低点的最大跌幅。形成天数是从高点跌到低点用了多久；修复用时是从低点重新回到原高点用了多久。没有回到原高点时，会标记为“修复中”。'],valuation:['估值百分位','当前估值在自身模拟历史中所处的位置。80%表示比过去大约80%的时候更贵，但不代表马上会跌。'],ac:['A/C 类','投资方向通常相同，费用收法不同。A常见申购费，C常见销售服务费；两类还可能有不同的赎回费阶梯。'],t1:['T+1 与15:00','15:00前提交，通常按当天收盘净值定价；15:00后顺延到下一交易日。份额确认和资金到账还需要时间。']};const [title,text]=terms[term]||['基金猫课堂','慢慢玩，规则会一点点认识。'];openModal(`<div class="modal-head"><div><h2>🐱 ${title}</h2><p>基金猫的一句话翻译</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${text}</div></div>`)}
 function openCat(){state.catSeen++;state.catClicks=(state.catClicks||0)+1;if(state.catClicks>=9)unlock('cat_staff');$('#catDot').textContent=Math.max(0,3-state.catSeen);$('#catDot').style.display=state.catSeen>=3?'none':'grid';openModal(`<div class="modal-head"><div><h2>🐱 基金猫</h2><p>不替你做决定，只负责在你上头时挠一下。</p></div><button class="close" data-close>✕</button></div><div class="cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div><div class="coach-toggle"><span>新手讲解模式</span><input type="checkbox" id="coachToggle" ${state.beginnerMode?'checked':''}></div><div class="cat-actions"><button data-term="ac">A/C类怎么选</button><button data-term="t1">三点和T+1</button><button data-term="drawdown">什么是回撤</button><button data-action="learn">打开入门课</button></div>`,()=>save())}
 function openLearningCenter(){openModal(`<div class="modal-head"><div><h2>🌱 基金入门</h2><p>不会也没关系，先记住五件事。</p></div><button class="close" data-close>✕</button></div><div class="lesson"><b>1. 基金买入不会立刻出现份额</b><p>订单先提交，收盘按净值定价，之后再确认。</p></div><div class="lesson"><b>2. 15:00 是重要分界线</b><p>三点前通常属于今天，三点后通常顺延到下一交易日。</p></div><div class="lesson"><b>3. A/C 类主要差在费用</b><p>结合申购费、销售服务费、赎回费阶梯和持有时间一起算。</p></div><div class="lesson"><b>4. 涨得多的基金也可能更难拿住</b><p>收益和波动是一对绑定出售的东西。</p></div><div class="lesson"><b>5. 新闻利好不保证上涨</b><p>价格可能早已反映预期，资金也可能借利好兑现。</p></div>`)}
 function tradeTimingText(type){const eff=effectiveDayForNewOrder(),f=state.dates[eff];if(state.stage<3)return `当前 ${currentTime()}：订单按今日收盘净值定价，15:00 前可撤单。`;return `当前已过 15:00：订单将于 ${f?dateLabel(f):'下一交易日'} 受理，在该日 15:00 前仍可撤单。`}
@@ -701,8 +749,18 @@ function openRecord(day){const r=state.records.find(x=>x.day===day);if(!r)return
 function openAchievement(id){const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;const open=state.achievements.includes(id);openModal(`<div class="modal-head"><div><h2>${open?a.emoji:'🔒'} ${open?a.name:(a.hidden?'隐藏成就':a.name)}</h2><p>${open?'已经解锁':'还没有解锁'}</p></div><button class="close" data-close>✕</button></div><div class="card"><div class="hint"><b>解锁条件</b><br>${open||!a.hidden?a.condition:'条件暂时保密，彩蛋要自己撞见才好玩。'}</div><div class="divider"></div><div class="hint"><b>当前进度</b><br>${achievementProgress(a)}</div>${open?`<div class="divider"></div><div class="hint"><b>系统吐槽</b><br>${a.roast}</div><div class="divider"></div><div class="hint"><b>留下的教训</b><br>${a.lesson}</div>`:''}</div>`)}
 function showTrades(){setPage('orders')}
 function openEnding(){const e=state.ending;openModal(`<div style="text-align:center"><div style="font-size:56px">${e.emoji}</div><h2>${e.type}</h2><p>${e.text}</p></div><div class="metric-row"><div class="metric"><span>最终资产</span><b>${fmtMoney(e.asset)}</b></div><div class="metric"><span>总收益率</span><b class="${cls(e.return)}">${fmtPct(e.return)}</b></div><div class="metric"><span>累计费用</span><b>${fmtMoney(e.fees)}</b></div><div class="metric"><span>解锁成就</span><b>${e.achievements}</b></div></div><button class="secondary" data-action="reset-game">重新挑战</button>`)}
-function openModal(html,after){$('#modal').innerHTML=html;$('#modalWrap').classList.add('show');$('#modalWrap').setAttribute('aria-hidden','false');after?.()}
-function closeModal(){$('#modalWrap').classList.remove('show');$('#modalWrap').setAttribute('aria-hidden','true')}
+const modalStack=[];
+function openModal(html,after,{nested=true}={}){
+  const wrap=$('#modalWrap'),modal=$('#modal');
+  if(nested&&wrap.classList.contains('show')&&modal.innerHTML){modalStack.push({html:modal.innerHTML,scrollTop:modal.scrollTop})}
+  modal.innerHTML=html;modal.scrollTop=0;wrap.classList.add('show');wrap.setAttribute('aria-hidden','false');after?.();
+}
+function closeModal(){
+  const modal=$('#modal'),wrap=$('#modalWrap');
+  if(modalStack.length){const prev=modalStack.pop();modal.innerHTML=prev.html;modal.scrollTop=prev.scrollTop||0;return}
+  wrap.classList.remove('show');wrap.setAttribute('aria-hidden','true');modal.innerHTML='';
+}
+function closeModalCompletely(){modalStack.length=0;const modal=$('#modal'),wrap=$('#modalWrap');wrap.classList.remove('show');wrap.setAttribute('aria-hidden','true');modal.innerHTML=''}
 function setPage(page,scroll=true){state.currentPage=page;$$('.page').forEach(p=>p.classList.add('hidden'));$(`#page-${page}`).classList.remove('hidden');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===page));if(scroll)window.scrollTo({top:0,behavior:'smooth'});save()}
 function resetGame(){if(!confirm('重新开始会清空 V7 的持仓、订单和成就，并从 DAY 1 开始，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
 
@@ -715,7 +773,7 @@ function bindEvents(){
     const term=e.target.closest('[data-term]');if(term)return openLearning(term.dataset.term);
     if(e.target.closest('[data-action="learn"]'))return openLearningCenter();
     const page=e.target.closest('[data-page]');if(page)return setPage(page.dataset.page);
-    const adv=e.target.closest('[data-action="advance"]');if(adv)return advanceTime();if(e.target.closest('[data-action="fast-close"]'))return fastClose();if(e.target.closest('[data-action="confirm-fast-close"]')){closeModal();return performFastClose()}if(e.target.closest('[data-action="review-orders"]')){closeModal();return setPage('orders')}
+    const adv=e.target.closest('[data-action="advance"]');if(adv)return advanceTime();if(e.target.closest('[data-action="fast-close"]'))return fastClose();if(e.target.closest('[data-action="confirm-fast-close"]')){closeModalCompletely();return performFastClose()}if(e.target.closest('[data-action="review-orders"]')){closeModalCompletely();return setPage('orders')}
     const fund=e.target.closest('[data-fund]');if(fund&&!e.target.closest('[data-watch]'))return openFund(fund.dataset.fund,fund.dataset.mode||'buy',fund.dataset.class||'A');
     const watch=e.target.closest('[data-watch]');if(watch){e.stopPropagation();const id=watch.dataset.watch;state.watchlist=state.watchlist.includes(id)?state.watchlist.filter(x=>x!==id):[...state.watchlist,id];renderAll();return}
     const sec=e.target.closest('[data-sector]');if(sec){state.activeSector=sec.dataset.sector;renderMarket();return}
@@ -742,7 +800,7 @@ function bindEvents(){
       const pct=Number(e.target.value),btn=$('[data-submit-sell]');if(!btn)return;const h=getHolding(btn.dataset.submitSell,btn.dataset.class),f=fundById(btn.dataset.submitSell);if(!h)return;const units=availableUnits(h)*pct/100,preview=previewSellLots(h,units,f,classNav(f,h.shareClass),state.dates[effectiveDayForNewOrder()]||currentDate());$('#sellPct').textContent=pct+'%';$('#sellPreview').textContent=`预计卖出 ${units.toFixed(2)} 份，综合费率 ${(preview.weightedRate*100).toFixed(2)}%，预计到账 ${fmtMoney(preview.proceeds)}`;
     }
   });
-  $('#modalWrap').addEventListener('click',e=>{if(e.target===$('#modalWrap'))closeModal()});
+  $('#modalWrap').addEventListener('click',e=>{if(e.target===$('#modalWrap'))closeModalCompletely()});
   $('#feedbackClose').addEventListener('click',closeFeedback);$('#feedback').addEventListener('click',e=>{if(e.target===$('#feedback'))closeFeedback()});
   $('#startBtn').addEventListener('click',()=>{state.started=true;applyExperience();state.currentPage=state.experience==='pro'?'market':'home';$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save();setTimeout(()=>showFeedback('🌅','DAY 1 · 第一天投资',Cat.dayOneLines(dateLabel(currentDate()),state.experience),false),260)});
   $('#bellBtn').addEventListener('click',()=>{state.bellClicks++;if(state.bellClicks>=7)unlock('moon')});
