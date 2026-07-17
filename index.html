@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" />
-<meta name="theme-color" content="#090b12" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>今天回本了吗？V6.1 决策复盘版</title>
-<style>
-:root{
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark" data-experience="new"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" /><meta name="theme-color" content="#090b12" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /><title>今天回本了吗？V7 模块化版</title><style>:root{
   --bg:#080b12;--panel:#111624;--panel2:#171e2f;--panel3:#0d111c;
   --line:#283147;--text:#f5f7fb;--muted:#929cb3;--red:#ff6578;--green:#39d19a;
   --gold:#ffd36f;--blue:#78a9ff;--purple:#b98cff;--orange:#ff9a73;
@@ -73,19 +63,17 @@ html[data-theme="light"] .card,html[data-theme="light"] .hero,html[data-theme="l
 html[data-theme="light"] .mini,html[data-theme="light"] .seg,html[data-theme="light"] .valuation,html[data-theme="light"] .beginner-note,html[data-theme="light"] .profile-note{background:var(--panel3)!important;color:var(--text)!important}
 html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba(243,246,251,.97) 25%)}html[data-theme="light"] .bottom-nav:before{background:rgba(255,255,255,.96);border-color:var(--line);box-shadow:0 12px 35px rgba(60,76,110,.13)}html[data-theme="light"] .fund-row,html[data-theme="light"] .holding,html[data-theme="light"] .hero,html[data-theme="light"] .news-card{background-image:none!important}
 @media(max-width:390px){.clock-actions{min-width:86px}.asset{font-size:31px}.market-clock{gap:8px}.reason-box select{font-size:14px}.day-val{font-size:10px!important}}
-
-</style>
-</head>
-<body>
-<div id="boot" class="boot">
+.boot-date{margin:12px auto 2px;padding:9px 12px;border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;font-size:12px;color:var(--muted);background:var(--panel3)}
+.module-note{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
+</style></head><body><div id="boot" class="boot">
   <div class="boot-card">
     <button class="bell" id="bellBtn" aria-label="开盘铃">🔔</button>
-    <div class="boot-kicker">FUND LIFE SIMULATOR · V6.1</div>
+    <div class="boot-kicker">FUND LIFE SIMULATOR · V7</div>
     <h1>今天，能回本吗？</h1>
     <p>一套按照真实基金交易逻辑运转的模拟世界。<br>新闻会骗人，费用会偷吃收益，三点以后又是明天。</p>
     <div class="experience" id="experiencePick"><button data-experience="new" class="active"><span>🌱</span>完全不会</button><button data-experience="some"><span>🙂</span>知道一点</button><button data-experience="pro"><span>😎</span>老基民</button></div>
-    <button class="primary big" id="startBtn">进入基金世界</button>
-    <div class="boot-note">模拟规则仅用于游戏教学，不构成投资建议；不同真实基金的确认日与费率以产品文件为准。</div>
+    <div class="boot-date" id="bootDate">DAY 1 · 准备开盘</div><button class="primary big" id="startBtn">从 DAY 1 开始</button>
+    <div class="boot-note">模拟规则仅用于游戏教学，不构成投资建议；不同真实基金的确认日与费率以产品文件为准。<div class="module-note">V7 已拆分为页面、样式、市场、交易、日历、基金猫与成就模块。</div></div>
   </div>
 </div>
 
@@ -95,7 +83,7 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
   <header class="topbar">
     <div class="brand" id="brandEaster">
       <div class="brand-icon">📈</div>
-      <div><b>今天回本了吗？</b><small>沉浸式基金模拟器 · V6.1</small></div>
+      <div><b>今天回本了吗？</b><small>模块化基金模拟器 · V7</small></div>
     </div>
     <div class="top-actions"><button class="theme-toggle" id="themeBtn" aria-label="切换日夜模式">🌙</button><button class="clock-pill" id="clockBtn"><span id="dayLabel">DAY 1</span><b id="timeLabel">09:30</b></button></div>
   </header>
@@ -122,103 +110,184 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
 
 <div class="modal-wrap" id="modalWrap" aria-hidden="true">
   <div class="modal" id="modal"></div>
-</div>
+</div><script>(() => {
+  'use strict';
+  const root = window.FundGameV7 = window.FundGameV7 || {};
+  const TIME_STAGES = ['09:30','11:30','14:50','15:00','20:00'];
+  const STAGE_LABELS = ['开盘','午间休市','截止前10分钟','收盘处理中','净值已更新'];
+  const DAY_PROGRESS = [0.18,0.43,0.78,1,1];
+  function dateObj(str){return new Date(str+'T12:00:00')}
+  function isoDate(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
+  function dateLabel(str){const d=dateObj(str);return `${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`}
+  function isWeekend(str){const d=dateObj(str).getDay();return d===0||d===6}
+  function tradingDates(count=60,start=new Date()){
+    const out=[];let d=new Date(start);d.setHours(12,0,0,0);
+    while(out.length<count){const day=d.getDay();if(day!==0&&day!==6)out.push(isoDate(d));d.setDate(d.getDate()+1)}
+    return out;
+  }
+  function calendarDaysBetween(start,end){if(!start||!end)return 0;return Math.max(0,Math.round((dateObj(end)-dateObj(start))/86400000))}
+  function closedNaturalDaysBetween(from,to){return Math.max(0,calendarDaysBetween(from,to)-1)}
+  root.Calendar={TIME_STAGES,STAGE_LABELS,DAY_PROGRESS,dateObj,isoDate,dateLabel,isWeekend,tradingDates,calendarDaysBetween,closedNaturalDaysBetween};
+})();
+</script><script>(() => {
+  'use strict';
+  const root=window.FundGameV7=window.FundGameV7||{};
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const round=(n,d=4)=>Number(n.toFixed(d));
+  function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+  const SECTORS = {
+    '稳健': {color:'#7fd8c5',vol:0.45,valuation:38,icon:'🛟',stocks:['政策金融债','高等级信用债','同业存单','短久期国债']},
+    '红利': {color:'#ffd36f',vol:1.45,valuation:46,icon:'🏦',stocks:['中国神华','长江电力','中国移动','工商银行']},
+    '消费': {color:'#ff9f9f',vol:2.25,valuation:55,icon:'🛍️',stocks:['贵州茅台','美的集团','海尔智家','伊利股份']},
+    '医药': {color:'#70d6b8',vol:2.9,valuation:42,icon:'💊',stocks:['恒瑞医药','迈瑞医疗','药明康德','爱尔眼科']},
+    '黄金': {color:'#f4c95d',vol:1.85,valuation:61,icon:'🪙',stocks:['黄金现货','山东黄金','紫金矿业','赤峰黄金']},
+    '海外': {color:'#8da0ff',vol:3.1,valuation:73,icon:'🌎',stocks:['微软','英伟达','苹果','亚马逊']},
+    '半导体': {color:'#b78cff',vol:4.7,valuation:68,icon:'🧠',stocks:['中芯国际','北方华创','海光信息','寒武纪']},
+    'CPO': {color:'#ff79c6',vol:5.4,valuation:84,icon:'🔌',stocks:['中际旭创','新易盛','天孚通信','光迅科技']},
+    '新能源': {color:'#6ee7b7',vol:4.25,valuation:44,icon:'⚡️',stocks:['宁德时代','阳光电源','隆基绿能','亿纬锂能']},
+    'AI': {color:'#ff8b68',vol:5.8,valuation:89,icon:'🤖',stocks:['工业富联','科大讯飞','浪潮信息','金山办公']}
+  };
+  const VARIANTS = [
+    {key:'focus',label:'满仓猛攻',cash:0.02,concentration:0.78,alpha:0.10,riskPlus:1,desc:'行业暴露很高，涨跌都不讲武德。'},
+    {key:'quality',label:'质量成长',cash:0.06,concentration:0.62,alpha:0.06,riskPlus:0,desc:'更偏龙头，通常比板块稳一点。'},
+    {key:'balanced',label:'均衡精选',cash:0.12,concentration:0.46,alpha:0.02,riskPlus:-1,desc:'不会把全部希望压在一个故事上。'},
+    {key:'flex',label:'灵活配置',cash:0.20,concentration:0.35,alpha:0.04,riskPlus:-1,desc:'现金多、调仓勤，偶尔躲过一刀。'}
+  ];
+  const PREFIXES = {
+    '稳健':['稳稳幸福','现金护城河','低波慢慢来','债海求生'],
+    '红利':['红利养老','股息收租','老登价值','低波守门'],
+    '消费':['快乐消费','人间烟火','买买买精选','白马复苏'],
+    '医药':['医药回血','创新药守望','医疗修复','健康长跑'],
+    '黄金':['黄金避难所','乱世金库','贵金属守夜','避险雷达'],
+    '海外':['海外大厂观光团','纳指高空作业','全球科技巡游','美股时差党'],
+    '半导体':['半导体受害者','国产替代信仰','芯片周期观察员','先进制造挖掘机'],
+    'CPO':['光模块冲浪者','CPO高空接力','算力连接线','通信设备显微镜'],
+    '新能源':['新能源追光者','光伏等风来','锂电回血计划','绿色能源循环'],
+    'AI':['AI幻觉制造机','算力故事会','人工智能许愿池','大模型淘金者']
+  };
+  const MANAGERS = ['林一鸣','顾北辰','苏清禾','沈知行','程予安','江临川','陆星野','周谨言','许知夏','唐越'];
+  function buildFeeRules(f,variantKey){
+    const purchase=f.risk<=2?0.0006:f.risk===3?0.0010:0.0012;
+    const service=f.risk<=2?0.0025:f.risk===3?0.0040:0.0060;
+    const aMid=variantKey==='focus'?0.0075:variantKey==='quality'?0.0050:0.0025;
+    const aLong=f.sector==='海外'?0.0050:(f.risk>=4?0.0050:0.0025);
+    const cMid=variantKey==='focus'||f.risk>=4?0.0050:0.0025;
+    const cExtra=f.sector==='海外'?[{lt:90,rate:0.0025,label:'30天≤持有＜90天'}]:[];
+    return {
+      A:{purchase,service:0,redemption:[{lt:7,rate:.015,label:'持有不足7天'},{lt:30,rate:aMid,label:'7天≤持有＜30天'},{lt:180,rate:aLong,label:'30天≤持有＜180天'},{lt:365,rate:.0025,label:'180天≤持有＜365天'},{lt:Infinity,rate:0,label:'持有满365天'}]},
+      C:{purchase:0,service,redemption:[{lt:7,rate:.015,label:'持有不足7天'},{lt:30,rate:cMid,label:'7天≤持有＜30天'},...cExtra,{lt:Infinity,rate:0,label:cExtra.length?'持有满90天':'持有满30天'}]}
+    };
+  }
 
-<script>
-(() => {
+  function makeFunds(){
+    const funds=[]; let code=100001;
+    Object.entries(SECTORS).forEach(([sector,sd],si)=>{
+      VARIANTS.forEach((v,vi)=>{
+        const prefix=PREFIXES[sector][vi];
+        const risk=clamp(Math.round(sd.vol/1.15)+v.riskPlus,1,5);
+        const weights = vi===0?[0.34,0.27,0.22,0.17]:vi===1?[0.29,0.25,0.23,0.23]:vi===2?[0.26,0.25,0.25,0.24]:[0.23,0.22,0.20,0.18];
+        funds.push({
+          id:`${sector}-${v.key}`,name:`${prefix}${v.label}`,code:String(code++).padStart(6,'0'),sector,
+          risk,accent:sd.color,icon:sd.icon,vol:sd.vol*(0.84+v.concentration*0.38),cashRatio:v.cash,
+          concentration:v.concentration,alpha:v.alpha+(si%3-1)*0.015,manager:MANAGERS[(si*4+vi)%MANAGERS.length],
+          desc:v.desc,feeRules:null,holdings:sd.stocks.map((name,i)=>({name,weight:weights[i]})),
+          valuation:clamp(sd.valuation+(vi-1.5)*6,5,95),turnover:[18,9,5,22][vi],
+          navA:round(0.88+(hash(sector+v.key)%6200)/10000),navC:round(0.88+(hash(sector+v.key)%6200)/10000),
+          change:0,estimate:0,historyA:[],historyC:[],maxDrawdown:0,drawdownDays:0
+        });
+      });
+    });
+    funds.forEach(f=>{f.historyA=[f.navA];f.historyC=[f.navC];const variant=f.id.split('-').at(-1);f.feeRules=buildFeeRules(f,variant)});
+    return funds;
+  }
+  root.Funds={SECTORS,VARIANTS,PREFIXES,MANAGERS,buildFeeRules,makeFunds};
+})();
+</script><script>(() => {
+  'use strict';
+  const root=window.FundGameV7=window.FundGameV7||{};
+  const NEWS = [
+    {icon:'🤖',title:'算力订单传出超预期消息',sentiment:'强利好',text:'市场开始重新计算 AI、CPO 与半导体的成长空间，但拥挤度也来到高位。',impact:{AI:3.6,CPO:3.8,'半导体':2.4,'海外':0.7},crowding:1.05},
+    {icon:'🧯',title:'热门科技赛道出现高位减持',sentiment:'偏利空',text:'故事没有结束，但筹码开始松动。资金更在意谁先落袋为安。',impact:{AI:-3.4,CPO:-3.8,'半导体':-2.2},crowding:0.25},
+    {icon:'🏦',title:'稳定现金流资产重新受关注',sentiment:'偏利好',text:'波动上升后，红利和稳健资产突然显得眉清目秀。',impact:{'红利':2.2,'稳健':0.45,'消费':0.35},crowding:0.35},
+    {icon:'🛍️',title:'消费数据边际回暖',sentiment:'温和利好',text:'旅游、家电和餐饮数据改善，但市场仍在观察持续性。',impact:{'消费':2.7,'红利':0.4},crowding:0.45},
+    {icon:'💊',title:'创新药出海授权再落一单',sentiment:'行业利好',text:'医药情绪升温，但前期涨幅较大的个股可能出现兑现。',impact:{'医药':3.2},crowding:0.72},
+    {icon:'⚡️',title:'新能源价格战继续升级',sentiment:'偏利空',text:'销量增长与利润压力同时存在，市场开始区分产业链环节。',impact:{'新能源':-3.4,'消费':0.2},crowding:0.3},
+    {icon:'🪙',title:'避险情绪突然升温',sentiment:'避险利好',text:'黄金获得资金流入，高估值成长资产承压。',impact:{'黄金':2.9,'AI':-1.4,'CPO':-1.1,'海外':-0.8},crowding:0.25},
+    {icon:'🌎',title:'海外科技巨头财报分化',sentiment:'多空交织',text:'指数看似平静，内部却是有人吃肉、有人交学费。',impact:{'海外':1.0,'AI':0.8,'半导体':0.6},crowding:0.85},
+    {icon:'🫠',title:'午后两点半没有原因地跳水',sentiment:'情绪利空',text:'没有足够清晰的解释，但所有人都开始解释。',all:-1.8,impact:{'稳健':0.15,'黄金':0.5},crowding:0.1},
+    {icon:'🐂',title:'神秘资金尾盘拉升',sentiment:'情绪利好',text:'指数直线向上，空仓的人忽然觉得自己错过了一个时代。',all:1.35,impact:{'红利':0.5,'半导体':0.7,CPO:0.8},crowding:0.9},
+    {icon:'🧊',title:'市场进入无聊模式',sentiment:'中性',text:'成交缩量，热点轮动变慢。今天耐心比预测更值钱。',all:-0.1,impact:{'稳健':0.25,'红利':0.15},crowding:0.05},
+    {icon:'📉',title:'强利好落地，资金选择兑现',sentiment:'利好落地',text:'消息是真的，卖盘也是真的。价格可能早已提前表达期待。',impact:{CPO:-2.9,AI:-2.5,'半导体':-2.1},crowding:1.4},
+    {icon:'🧾',title:'政策表态积极但细节仍待明确',sentiment:'预期利好',text:'市场先交易想象，再等待现实。',impact:{'新能源':1.6,'消费':1.1,'医药':0.9},crowding:0.95},
+    {icon:'🌊',title:'外围市场集体打喷嚏',sentiment:'风险偏好下降',text:'高波动资产先挨打，黄金和稳健类获得一点喘息。',all:-0.8,impact:{'海外':-2.4,AI:-2.0,CPO:-2.1,'黄金':1.2,'稳健':0.2},crowding:0.2},
+    {icon:'🎲',title:'量化风格突然反转',sentiment:'风格切换',text:'昨天有效的策略今天开始互相踩踏，板块内部差异扩大。',all:-0.2,impact:{'红利':0.8,'消费':0.6,CPO:-0.8,'AI':-0.7},crowding:0.55}
+  ];
+
+  function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+  function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+  function normal(rand){let u=0,v=0;while(!u)u=rand();while(!v)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+  root.Market={NEWS,hash,rng,normal};
+})();
+</script><script>(() => {
+  'use strict';
+  const root=window.FundGameV7=window.FundGameV7||{};
+  const BUY_REASONS = {
+    sector:'看好板块',valuation:'估值偏低',chase:'看到上涨想追',news:'新闻利好',diversify:'分散配置',random:'随便试试'
+  };
+  root.Trade={BUY_REASONS};
+})();
+</script><script>(() => {
+  'use strict';
+  const root=window.FundGameV7=window.FundGameV7||{};
+  const EXPERIENCE={new:{icon:'🌱',name:'新手模式',note:'术语解释更多，基金猫会主动提醒'},some:{icon:'🙂',name:'进阶模式',note:'保留关键提示，减少重复教学'},pro:{icon:'😎',name:'老基民模式',note:'默认基金页，展示更密集的指标'}};
+  function message({stage,totalReturn,cashRatio,holdingCount}){if(stage===2)return'只剩十分钟啦。下单前再看一眼：你买的是逻辑，还是怕错过？';if(stage>=3)return'收盘了。今天的结果不等于今天的决策质量。';if(totalReturn<-5)return'今天有点疼，但先别把“难受”当作卖出理由。';if(cashRatio<.08)return'现金快被你花光了。留一点选择权，也算一种仓位。';if(!holdingCount)return'第一次买可以小一点。学规则，不需要先交一大笔学费。';return'我负责提醒，你负责决定。市场可不会替我们负责。'}
+  function dayOneLines(label,experience){const x=EXPERIENCE[experience]||EXPERIENCE.new;return[`${label} · DAY 1`,`${x.icon} ${x.name}已开启`,'今天先认识市场，不急着证明自己。']}
+  function weekendLines(days,nextLabel){return[`交易所休息 ${days} 个自然日`,`${nextLabel} 09:30 再开盘`,'新闻可以看，场外基金订单会顺延。']}
+  root.Cat={EXPERIENCE,message,dayOneLines,weekendLines};
+})();
+</script><script>(() => {
+  'use strict';
+  const root=window.FundGameV7=window.FundGameV7||{};
+  const ACHIEVEMENTS = [
+    {id:'first_order',emoji:'🍼',name:'第一次下单',hidden:false,condition:'提交第一笔买入或卖出订单',roast:'恭喜，你正式从“看看”进入“可能会后悔”。',lesson:'交易前先知道自己为什么买。'},
+    {id:'three_o_one',emoji:'⏰',name:'三点零一分',hidden:false,condition:'15:00 后提交一笔订单',roast:'就差一分钟，但基金公司不接受“我手机慢”。',lesson:'截止时间决定订单按哪一天的净值成交。'},
+    {id:'cancel_master',emoji:'↩️',name:'撤单大师',hidden:false,condition:'成功撤销 3 笔订单',roast:'下单靠冲动，撤单靠求生欲。',lesson:'成交前重新检查，比成交后懊悔便宜。'},
+    {id:'good_news_bad_close',emoji:'🎭',name:'利好出尽是利空',hidden:false,condition:'强利好日追入相关基金且收盘下跌',roast:'消息是真的，接盘也是真的。',lesson:'利好、估值、筹码和价格不是同一件事。'},
+    {id:'cpo_bad',emoji:'🔌',name:'CPO没一个好东西',hidden:false,condition:'同时持有 3 只 CPO 基金且板块日亏损',roast:'看似分散，实际上换了三个包装押同一个方向。',lesson:'多只同赛道基金不等于分散风险。'},
+    {id:'chip_victim',emoji:'🤡',name:'半导体受害者协会',hidden:false,condition:'半导体持仓最大回撤超过 15%',roast:'入会无需申请，净值会替你盖章。',lesson:'高波动赛道的风险要用仓位管理，而不是信仰管理。'},
+    {id:'average_down',emoji:'🪜',name:'再跌我就加仓',hidden:false,condition:'同一基金连续 3 个下跌日买入',roast:'本来想抄底，后来成了地下室住户。',lesson:'分批买入应有计划，而不是被跌幅驱动。'},
+    {id:'break_even_sell',emoji:'🚪',name:'回本即卖',hidden:false,condition:'收益率回到 ±0.5% 内后全部赎回',roast:'它刚回来，你就把它赶出家门。',lesson:'退出应基于目标与逻辑，而不是只盯成本线。'},
+    {id:'look_only',emoji:'👀',name:'我就看看，不买',hidden:false,condition:'连续 5 个交易日不下单',roast:'真正的自控，是打开软件又完整退出。',lesson:'不交易也是一种主动决策。'},
+    {id:'ac_twins',emoji:'🅰️',name:'A/C双修',hidden:false,condition:'同时持有同一基金的 A 类与 C 类',roast:'选择困难症最终决定：都要。',lesson:'份额类别的费用结构不同，不是字母皮肤。'},
+    {id:'short_fee',emoji:'🧾',name:'七天学费',hidden:false,condition:'持有不足 7 天赎回并支付短期赎回费',roast:'收益还没长大，费用先成年了。',lesson:'频繁申赎会让费用侵蚀本就脆弱的收益。'},
+    {id:'diversified',emoji:'🧺',name:'别把蛋放一起',hidden:false,condition:'同时持有 4 个不同板块',roast:'终于不是四只名字不同、持仓相同的基金了。',lesson:'真正的分散来自风险来源不同。'},
+    {id:'cash_king',emoji:'🛟',name:'现金护城河',hidden:false,condition:'连续 5 日现金占比高于 20%',roast:'别人问你赚了多少，你说我还有子弹。',lesson:'现金提供缓冲和选择权。'},
+    {id:'diamond',emoji:'💎',name:'手没有乱动',hidden:false,condition:'组合大跌日没有恐慌卖出',roast:'手指已经悬在卖出键上，但脑子及时上线。',lesson:'先检查逻辑，再处理情绪。'},
+    {id:'alarm',emoji:'🚓',name:'建议报警',hidden:false,condition:'单日组合亏损超过 5%',roast:'警察叔叔表示市场波动不归他们管。',lesson:'能让你睡不着的仓位，通常已经太大。'},
+    {id:'moon',emoji:'🌙',name:'月亮照常升起',hidden:true,condition:'找到首页隐藏彩蛋',roast:'净值会落，月亮还会升起来。',lesson:'一次亏损不是世界末日。'},
+    {id:'six_seventeen',emoji:'🎂',name:'6·17限定',hidden:true,condition:'提交金额为 617 元的订单',roast:'这笔交易没有玄学加成，但有一点可爱。',lesson:'金额可以有纪念意义，决策仍要有理由。'},
+    {id:'cat_staff',emoji:'🐾',name:'猫猫编外员工',hidden:true,condition:'累计点击基金猫 9 次',roast:'工资没有，猫毛管够。',lesson:'工具是辅助，决定仍然属于你。'},
+    {id:'love_order',emoji:'💌',name:'这不是投资建议，是告白',hidden:true,condition:'提交一笔 520 元订单',roast:'市场不一定爱你，但这笔金额挺会说话。',lesson:'仪式感可以有，理由也要有。'},
+    {id:'fee_accountant',emoji:'🧮',name:'费用计算器成精',hidden:false,condition:'根据计划持有期选择预计更省的 A/C 类',roast:'别人看涨跌，你先看费率表。',lesson:'同一基金的份额类别应按具体费率和持有期限比较。'},
+    {id:'all_in',emoji:'🪙',name:'现金清零术',hidden:true,condition:'下单后现金占比低于 1%',roast:'现在你拥有很多信仰，以及几乎没有选择权。',lesson:'留有现金，是留有纠错空间。'},
+    {id:'cancel_chase',emoji:'🧯',name:'冲动撤回成功',hidden:true,condition:'撤销一笔理由为“看到上涨想追”的买入单',roast:'手比脑子快了一次，脑子最终追回来了。',lesson:'能在成交前推翻冲动，是一项真实能力。'},
+    {id:'finish',emoji:'🏁',name:'活到最后',hidden:false,condition:'完成 30 个交易日',roast:'市场没把你带走，说明多少学会了点东西。',lesson:'长期生存比单日暴赚更重要。'}
+  ];
+  root.Achievement={ACHIEVEMENTS};
+})();
+</script><script>(() => {
 'use strict';
 
-const VERSION = '6.1.0';
-const STORAGE_KEY = 'fund_simulator_v6';
-const LEGACY_STORAGE_KEY = 'fund_simulator_v5';
-const INITIAL_CASH = 50000;
-const MAX_DAYS = 30;
-const TIME_STAGES = ['09:30','11:30','14:50','15:00','20:00'];
-const STAGE_LABELS = ['开盘','午间休市','截止前10分钟','收盘处理中','净值已更新'];
-const DAY_PROGRESS = [0.18,0.43,0.78,1,1];
-
-const SECTORS = {
-  '稳健': {color:'#7fd8c5',vol:0.45,valuation:38,icon:'🛟',stocks:['政策金融债','高等级信用债','同业存单','短久期国债']},
-  '红利': {color:'#ffd36f',vol:1.45,valuation:46,icon:'🏦',stocks:['中国神华','长江电力','中国移动','工商银行']},
-  '消费': {color:'#ff9f9f',vol:2.25,valuation:55,icon:'🛍️',stocks:['贵州茅台','美的集团','海尔智家','伊利股份']},
-  '医药': {color:'#70d6b8',vol:2.9,valuation:42,icon:'💊',stocks:['恒瑞医药','迈瑞医疗','药明康德','爱尔眼科']},
-  '黄金': {color:'#f4c95d',vol:1.85,valuation:61,icon:'🪙',stocks:['黄金现货','山东黄金','紫金矿业','赤峰黄金']},
-  '海外': {color:'#8da0ff',vol:3.1,valuation:73,icon:'🌎',stocks:['微软','英伟达','苹果','亚马逊']},
-  '半导体': {color:'#b78cff',vol:4.7,valuation:68,icon:'🧠',stocks:['中芯国际','北方华创','海光信息','寒武纪']},
-  'CPO': {color:'#ff79c6',vol:5.4,valuation:84,icon:'🔌',stocks:['中际旭创','新易盛','天孚通信','光迅科技']},
-  '新能源': {color:'#6ee7b7',vol:4.25,valuation:44,icon:'⚡️',stocks:['宁德时代','阳光电源','隆基绿能','亿纬锂能']},
-  'AI': {color:'#ff8b68',vol:5.8,valuation:89,icon:'🤖',stocks:['工业富联','科大讯飞','浪潮信息','金山办公']}
-};
-
-const VARIANTS = [
-  {key:'focus',label:'满仓猛攻',cash:0.02,concentration:0.78,alpha:0.10,riskPlus:1,desc:'行业暴露很高，涨跌都不讲武德。'},
-  {key:'quality',label:'质量成长',cash:0.06,concentration:0.62,alpha:0.06,riskPlus:0,desc:'更偏龙头，通常比板块稳一点。'},
-  {key:'balanced',label:'均衡精选',cash:0.12,concentration:0.46,alpha:0.02,riskPlus:-1,desc:'不会把全部希望压在一个故事上。'},
-  {key:'flex',label:'灵活配置',cash:0.20,concentration:0.35,alpha:0.04,riskPlus:-1,desc:'现金多、调仓勤，偶尔躲过一刀。'}
-];
-
-const PREFIXES = {
-  '稳健':['稳稳幸福','现金护城河','低波慢慢来','债海求生'],
-  '红利':['红利养老','股息收租','老登价值','低波守门'],
-  '消费':['快乐消费','人间烟火','买买买精选','白马复苏'],
-  '医药':['医药回血','创新药守望','医疗修复','健康长跑'],
-  '黄金':['黄金避难所','乱世金库','贵金属守夜','避险雷达'],
-  '海外':['海外大厂观光团','纳指高空作业','全球科技巡游','美股时差党'],
-  '半导体':['半导体受害者','国产替代信仰','芯片周期观察员','先进制造挖掘机'],
-  'CPO':['光模块冲浪者','CPO高空接力','算力连接线','通信设备显微镜'],
-  '新能源':['新能源追光者','光伏等风来','锂电回血计划','绿色能源循环'],
-  'AI':['AI幻觉制造机','算力故事会','人工智能许愿池','大模型淘金者']
-};
-
-const MANAGERS = ['林一鸣','顾北辰','苏清禾','沈知行','程予安','江临川','陆星野','周谨言','许知夏','唐越'];
-
-const NEWS = [
-  {icon:'🤖',title:'算力订单传出超预期消息',sentiment:'强利好',text:'市场开始重新计算 AI、CPO 与半导体的成长空间，但拥挤度也来到高位。',impact:{AI:3.6,CPO:3.8,'半导体':2.4,'海外':0.7},crowding:1.05},
-  {icon:'🧯',title:'热门科技赛道出现高位减持',sentiment:'偏利空',text:'故事没有结束，但筹码开始松动。资金更在意谁先落袋为安。',impact:{AI:-3.4,CPO:-3.8,'半导体':-2.2},crowding:0.25},
-  {icon:'🏦',title:'稳定现金流资产重新受关注',sentiment:'偏利好',text:'波动上升后，红利和稳健资产突然显得眉清目秀。',impact:{'红利':2.2,'稳健':0.45,'消费':0.35},crowding:0.35},
-  {icon:'🛍️',title:'消费数据边际回暖',sentiment:'温和利好',text:'旅游、家电和餐饮数据改善，但市场仍在观察持续性。',impact:{'消费':2.7,'红利':0.4},crowding:0.45},
-  {icon:'💊',title:'创新药出海授权再落一单',sentiment:'行业利好',text:'医药情绪升温，但前期涨幅较大的个股可能出现兑现。',impact:{'医药':3.2},crowding:0.72},
-  {icon:'⚡️',title:'新能源价格战继续升级',sentiment:'偏利空',text:'销量增长与利润压力同时存在，市场开始区分产业链环节。',impact:{'新能源':-3.4,'消费':0.2},crowding:0.3},
-  {icon:'🪙',title:'避险情绪突然升温',sentiment:'避险利好',text:'黄金获得资金流入，高估值成长资产承压。',impact:{'黄金':2.9,'AI':-1.4,'CPO':-1.1,'海外':-0.8},crowding:0.25},
-  {icon:'🌎',title:'海外科技巨头财报分化',sentiment:'多空交织',text:'指数看似平静，内部却是有人吃肉、有人交学费。',impact:{'海外':1.0,'AI':0.8,'半导体':0.6},crowding:0.85},
-  {icon:'🫠',title:'午后两点半没有原因地跳水',sentiment:'情绪利空',text:'没有足够清晰的解释，但所有人都开始解释。',all:-1.8,impact:{'稳健':0.15,'黄金':0.5},crowding:0.1},
-  {icon:'🐂',title:'神秘资金尾盘拉升',sentiment:'情绪利好',text:'指数直线向上，空仓的人忽然觉得自己错过了一个时代。',all:1.35,impact:{'红利':0.5,'半导体':0.7,CPO:0.8},crowding:0.9},
-  {icon:'🧊',title:'市场进入无聊模式',sentiment:'中性',text:'成交缩量，热点轮动变慢。今天耐心比预测更值钱。',all:-0.1,impact:{'稳健':0.25,'红利':0.15},crowding:0.05},
-  {icon:'📉',title:'强利好落地，资金选择兑现',sentiment:'利好落地',text:'消息是真的，卖盘也是真的。价格可能早已提前表达期待。',impact:{CPO:-2.9,AI:-2.5,'半导体':-2.1},crowding:1.4},
-  {icon:'🧾',title:'政策表态积极但细节仍待明确',sentiment:'预期利好',text:'市场先交易想象，再等待现实。',impact:{'新能源':1.6,'消费':1.1,'医药':0.9},crowding:0.95},
-  {icon:'🌊',title:'外围市场集体打喷嚏',sentiment:'风险偏好下降',text:'高波动资产先挨打，黄金和稳健类获得一点喘息。',all:-0.8,impact:{'海外':-2.4,AI:-2.0,CPO:-2.1,'黄金':1.2,'稳健':0.2},crowding:0.2},
-  {icon:'🎲',title:'量化风格突然反转',sentiment:'风格切换',text:'昨天有效的策略今天开始互相踩踏，板块内部差异扩大。',all:-0.2,impact:{'红利':0.8,'消费':0.6,CPO:-0.8,'AI':-0.7},crowding:0.55}
-];
-
-const BUY_REASONS = {
-  sector:'看好板块',valuation:'估值偏低',chase:'看到上涨想追',news:'新闻利好',diversify:'分散配置',random:'随便试试'
-};
-
-const ACHIEVEMENTS = [
-  {id:'first_order',emoji:'🍼',name:'第一次下单',hidden:false,condition:'提交第一笔买入或卖出订单',roast:'恭喜，你正式从“看看”进入“可能会后悔”。',lesson:'交易前先知道自己为什么买。'},
-  {id:'three_o_one',emoji:'⏰',name:'三点零一分',hidden:false,condition:'15:00 后提交一笔订单',roast:'就差一分钟，但基金公司不接受“我手机慢”。',lesson:'截止时间决定订单按哪一天的净值成交。'},
-  {id:'cancel_master',emoji:'↩️',name:'撤单大师',hidden:false,condition:'成功撤销 3 笔订单',roast:'下单靠冲动，撤单靠求生欲。',lesson:'成交前重新检查，比成交后懊悔便宜。'},
-  {id:'good_news_bad_close',emoji:'🎭',name:'利好出尽是利空',hidden:false,condition:'强利好日追入相关基金且收盘下跌',roast:'消息是真的，接盘也是真的。',lesson:'利好、估值、筹码和价格不是同一件事。'},
-  {id:'cpo_bad',emoji:'🔌',name:'CPO没一个好东西',hidden:false,condition:'同时持有 3 只 CPO 基金且板块日亏损',roast:'看似分散，实际上换了三个包装押同一个方向。',lesson:'多只同赛道基金不等于分散风险。'},
-  {id:'chip_victim',emoji:'🤡',name:'半导体受害者协会',hidden:false,condition:'半导体持仓最大回撤超过 15%',roast:'入会无需申请，净值会替你盖章。',lesson:'高波动赛道的风险要用仓位管理，而不是信仰管理。'},
-  {id:'average_down',emoji:'🪜',name:'再跌我就加仓',hidden:false,condition:'同一基金连续 3 个下跌日买入',roast:'本来想抄底，后来成了地下室住户。',lesson:'分批买入应有计划，而不是被跌幅驱动。'},
-  {id:'break_even_sell',emoji:'🚪',name:'回本即卖',hidden:false,condition:'收益率回到 ±0.5% 内后全部赎回',roast:'它刚回来，你就把它赶出家门。',lesson:'退出应基于目标与逻辑，而不是只盯成本线。'},
-  {id:'look_only',emoji:'👀',name:'我就看看，不买',hidden:false,condition:'连续 5 个交易日不下单',roast:'真正的自控，是打开软件又完整退出。',lesson:'不交易也是一种主动决策。'},
-  {id:'ac_twins',emoji:'🅰️',name:'A/C双修',hidden:false,condition:'同时持有同一基金的 A 类与 C 类',roast:'选择困难症最终决定：都要。',lesson:'份额类别的费用结构不同，不是字母皮肤。'},
-  {id:'short_fee',emoji:'🧾',name:'七天学费',hidden:false,condition:'持有不足 7 天赎回并支付短期赎回费',roast:'收益还没长大，费用先成年了。',lesson:'频繁申赎会让费用侵蚀本就脆弱的收益。'},
-  {id:'diversified',emoji:'🧺',name:'别把蛋放一起',hidden:false,condition:'同时持有 4 个不同板块',roast:'终于不是四只名字不同、持仓相同的基金了。',lesson:'真正的分散来自风险来源不同。'},
-  {id:'cash_king',emoji:'🛟',name:'现金护城河',hidden:false,condition:'连续 5 日现金占比高于 20%',roast:'别人问你赚了多少，你说我还有子弹。',lesson:'现金提供缓冲和选择权。'},
-  {id:'diamond',emoji:'💎',name:'手没有乱动',hidden:false,condition:'组合大跌日没有恐慌卖出',roast:'手指已经悬在卖出键上，但脑子及时上线。',lesson:'先检查逻辑，再处理情绪。'},
-  {id:'alarm',emoji:'🚓',name:'建议报警',hidden:false,condition:'单日组合亏损超过 5%',roast:'警察叔叔表示市场波动不归他们管。',lesson:'能让你睡不着的仓位，通常已经太大。'},
-  {id:'moon',emoji:'🌙',name:'月亮照常升起',hidden:true,condition:'找到首页隐藏彩蛋',roast:'净值会落，月亮还会升起来。',lesson:'一次亏损不是世界末日。'},
-  {id:'six_seventeen',emoji:'🎂',name:'6·17限定',hidden:true,condition:'提交金额为 617 元的订单',roast:'这笔交易没有玄学加成，但有一点可爱。',lesson:'金额可以有纪念意义，决策仍要有理由。'},
-  {id:'cat_staff',emoji:'🐾',name:'猫猫编外员工',hidden:true,condition:'累计点击基金猫 9 次',roast:'工资没有，猫毛管够。',lesson:'工具是辅助，决定仍然属于你。'},
-  {id:'love_order',emoji:'💌',name:'这不是投资建议，是告白',hidden:true,condition:'提交一笔 520 元订单',roast:'市场不一定爱你，但这笔金额挺会说话。',lesson:'仪式感可以有，理由也要有。'},
-  {id:'fee_accountant',emoji:'🧮',name:'费用计算器成精',hidden:false,condition:'根据计划持有期选择预计更省的 A/C 类',roast:'别人看涨跌，你先看费率表。',lesson:'同一基金的份额类别应按具体费率和持有期限比较。'},
-  {id:'all_in',emoji:'🪙',name:'现金清零术',hidden:true,condition:'下单后现金占比低于 1%',roast:'现在你拥有很多信仰，以及几乎没有选择权。',lesson:'留有现金，是留有纠错空间。'},
-  {id:'cancel_chase',emoji:'🧯',name:'冲动撤回成功',hidden:true,condition:'撤销一笔理由为“看到上涨想追”的买入单',roast:'手比脑子快了一次，脑子最终追回来了。',lesson:'能在成交前推翻冲动，是一项真实能力。'},
-  {id:'finish',emoji:'🏁',name:'活到最后',hidden:false,condition:'完成 30 个交易日',roast:'市场没把你带走，说明多少学会了点东西。',lesson:'长期生存比单日暴赚更重要。'}
-];
+const VERSION='7.0.0';
+const STORAGE_KEY='fund_simulator_v7';
+const INITIAL_CASH=50000;
+const MAX_DAYS=30;
+const {Calendar,Funds,Market,Trade,Cat,Achievement}=window.FundGameV7;
+const {TIME_STAGES,STAGE_LABELS,DAY_PROGRESS,tradingDates,dateObj,dateLabel,calendarDaysBetween,closedNaturalDaysBetween}=Calendar;
+const {SECTORS,buildFeeRules,makeFunds}=Funds;
+const {NEWS,hash,rng,normal}=Market;
+const {BUY_REASONS}=Trade;
+const {ACHIEVEMENTS}=Achievement;
 
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
@@ -228,51 +297,6 @@ const cls = n => n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
 const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
 const round = (n,d=4) => Number(n.toFixed(d));
 const deepClone = x => JSON.parse(JSON.stringify(x));
-
-function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
-function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
-function normal(rand){let u=0,v=0;while(!u)u=rand();while(!v)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
-
-function buildFeeRules(f,variantKey){
-  const purchase=f.risk<=2?0.0006:f.risk===3?0.0010:0.0012;
-  const service=f.risk<=2?0.0025:f.risk===3?0.0040:0.0060;
-  const aMid=variantKey==='focus'?0.0075:variantKey==='quality'?0.0050:0.0025;
-  const aLong=f.sector==='海外'?0.0050:(f.risk>=4?0.0050:0.0025);
-  const cMid=variantKey==='focus'||f.risk>=4?0.0050:0.0025;
-  const cExtra=f.sector==='海外'?[{lt:90,rate:0.0025,label:'30天≤持有＜90天'}]:[];
-  return {
-    A:{purchase,service:0,redemption:[{lt:7,rate:.015,label:'持有不足7天'},{lt:30,rate:aMid,label:'7天≤持有＜30天'},{lt:180,rate:aLong,label:'30天≤持有＜180天'},{lt:365,rate:.0025,label:'180天≤持有＜365天'},{lt:Infinity,rate:0,label:'持有满365天'}]},
-    C:{purchase:0,service,redemption:[{lt:7,rate:.015,label:'持有不足7天'},{lt:30,rate:cMid,label:'7天≤持有＜30天'},...cExtra,{lt:Infinity,rate:0,label:cExtra.length?'持有满90天':'持有满30天'}]}
-  };
-}
-
-function makeFunds(){
-  const funds=[]; let code=100001;
-  Object.entries(SECTORS).forEach(([sector,sd],si)=>{
-    VARIANTS.forEach((v,vi)=>{
-      const prefix=PREFIXES[sector][vi];
-      const risk=clamp(Math.round(sd.vol/1.15)+v.riskPlus,1,5);
-      const weights = vi===0?[0.34,0.27,0.22,0.17]:vi===1?[0.29,0.25,0.23,0.23]:vi===2?[0.26,0.25,0.25,0.24]:[0.23,0.22,0.20,0.18];
-      funds.push({
-        id:`${sector}-${v.key}`,name:`${prefix}${v.label}`,code:String(code++).padStart(6,'0'),sector,
-        risk,accent:sd.color,icon:sd.icon,vol:sd.vol*(0.84+v.concentration*0.38),cashRatio:v.cash,
-        concentration:v.concentration,alpha:v.alpha+(si%3-1)*0.015,manager:MANAGERS[(si*4+vi)%MANAGERS.length],
-        desc:v.desc,feeRules:null,holdings:sd.stocks.map((name,i)=>({name,weight:weights[i]})),
-        valuation:clamp(sd.valuation+(vi-1.5)*6,5,95),turnover:[18,9,5,22][vi],
-        navA:round(0.88+(hash(sector+v.key)%6200)/10000),navC:round(0.88+(hash(sector+v.key)%6200)/10000),
-        change:0,estimate:0,historyA:[],historyC:[],maxDrawdown:0,drawdownDays:0
-      });
-    });
-  });
-  funds.forEach(f=>{f.historyA=[f.navA];f.historyC=[f.navC];const variant=f.id.split('-').at(-1);f.feeRules=buildFeeRules(f,variant)});
-  return funds;
-}
-
-function tradingDates(count=60){
-  const out=[];let d=new Date();d.setHours(12,0,0,0);
-  while(out.length<count){const day=d.getDay();if(day!==0&&day!==6)out.push(d.toISOString().slice(0,10));d.setDate(d.getDate()+1)}
-  return out;
-}
 
 function initialState(){
   const dates=tradingDates(70);
@@ -310,7 +334,7 @@ function applyExperience(){
   if(state.experience==='new')state.beginnerMode=true;
 }
 function load(){
-  try{const raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem(LEGACY_STORAGE_KEY);if(raw)state=migrateState(JSON.parse(raw))}catch(e){console.warn(e)}
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)state=migrateState(JSON.parse(raw))}catch(e){console.warn(e)}
   applyTheme();applyExperience();
 }
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1900)}
@@ -318,8 +342,7 @@ function applyTheme(){document.documentElement.dataset.theme=state.theme||'dark'
 function toggleTheme(){state.theme=state.theme==='light'?'dark':'light';applyTheme();save()}
 function showFeedback(icon,title,lines,confetti=true){const box=$('#feedback');$('#feedbackIcon').textContent=icon;$('#feedbackTitle').textContent=title;$('#feedbackLines').innerHTML=lines.map((x,i)=>i===0?`<b>${x}</b>`:x).join('<br>');const layer=$('#feedbackConfetti');layer.innerHTML='';if(confetti){const bits=['✨','🎉','⭐','💫','📈'];for(let i=0;i<18;i++){const el=document.createElement('span');el.className='confetti';el.textContent=bits[i%bits.length];el.style.left=(Math.random()*100)+'%';el.style.animationDelay=(Math.random()*.45)+'s';el.style.animationDuration=(1.1+Math.random()*.8)+'s';layer.appendChild(el)}}box.classList.add('show');box.setAttribute('aria-hidden','false');try{navigator.vibrate?.(35)}catch(e){}}
 function closeFeedback(){$('#feedback').classList.remove('show');$('#feedback').setAttribute('aria-hidden','true')}
-function dateObj(str){return new Date(str+'T12:00:00')}
-function dateLabel(str){const d=dateObj(str);return `${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`}
+
 function currentDate(){return state.dates[state.day]}
 function currentTime(){return TIME_STAGES[state.stage]}
 function classNav(f,shareClass){return shareClass==='C'?f.navC:f.navA}
@@ -344,9 +367,7 @@ function totalReturn(){return (totalAsset()/INITIAL_CASH-1)*100}
 function cashRatio(){return state.cash/Math.max(totalAsset(),1)}
 function mood(){const r=totalReturn();if(r>10)return'开始膨胀';if(r>3)return'嘴角上扬';if(r<-12)return'想卸载软件';if(r<-5)return'假装没看';if(cashRatio()<.05)return'满仓祈祷';return'冷静观察'}
 function feeConfig(f,shareClass){return f.feeRules?.[shareClass]||buildFeeRules(f,f.id.split('-').at(-1))[shareClass]}
-function calendarDaysBetween(start,end=currentDate()){
-  if(!start||!end)return 0;return Math.max(0,Math.round((dateObj(end)-dateObj(start))/86400000));
-}
+
 function lotDays(lot,atDate=currentDate()){return calendarDaysBetween(lot.confirmDate||state.dates[lot.confirmDay||0],atDate)}
 function holdingDays(h,atDay=state.day){const atDate=state.dates[atDay]||currentDate();const lots=(h?.lots||[]).filter(l=>l.units>1e-8);return lots.length?Math.max(...lots.map(l=>lotDays(l,atDate))):0}
 function redemptionStep(days,f,shareClass){const rules=feeConfig(f,shareClass).redemption;return rules.find(x=>days<x.lt)||rules.at(-1)}
@@ -480,7 +501,9 @@ function finalizeDay(){
 }
 function nextDay(){
   finalizeDay();if(state.day>=MAX_DAYS-1){state.ending=buildEnding();unlock('finish');renderAll();openEnding();return}
-  state.day++;state.stage=0;processMorning();state.dayStartAsset=totalAsset();createMarketForDay();updateEstimates();renderAll();save();toast('新交易日开盘');
+  const from=currentDate(),to=state.dates[state.day+1],closedDays=closedNaturalDaysBetween(from,to);
+  state.day++;state.stage=0;processMorning();state.dayStartAsset=totalAsset();createMarketForDay();updateEstimates();renderAll();save();
+  if(closedDays>0)setTimeout(()=>showFeedback('🏖️','周末休市',Cat.weekendLines(closedDays,dateLabel(to)),false),220);else toast('新交易日开盘');
 }
 function advanceTime(){
   if(state.stage<2){state.stage++;updateEstimates();renderAll();save();return}
@@ -581,12 +604,10 @@ function homeMission(){
   if(best&&best[1]>2.8)return {title:`🔥 ${best[0]}今天很热，你要追吗？`,sub:'看见上涨之后，先看看估值、拥挤度和自己的仓位。'};
   const m=minutesToClose();return {title:`📢 距离收盘还有 ${Math.floor(m/60)}小时${m%60?m%60+'分钟':''}`,sub:'15:00 前的订单按今日净值定价，也可以在截止前撤销。'};
 }
-function catMessage(){
-  const r=totalReturn();if(state.stage===2)return '只剩十分钟啦。下单前再看一眼：你买的是逻辑，还是怕错过？';if(state.stage>=3)return '收盘了。今天的结果不等于今天的决策质量。';if(r<-5)return '今天有点疼，但先别把“难受”当作卖出理由。';if(cashRatio()<.08)return '现金快被你花光了。留一点选择权，也算一种仓位。';if(!allHoldings().length)return '第一次买可以小一点。学规则，不需要先交一大笔学费。';return '我负责提醒，你负责决定。市场可不会替我们负责。';
-}
+function catMessage(){return Cat.message({stage:state.stage,totalReturn:totalReturn(),cashRatio:cashRatio(),holdingCount:allHoldings().length})}
 function renderHome(){
   const market=state.currentMarket,news=market.news,date=currentDate(),watch=state.watchlist.map(fundById).filter(Boolean).slice(0,5),top=[...state.funds].sort((a,b)=>b.estimate-a.estimate).slice(0,4),mission=homeMission();
-  const profile=state.experience==='new'?['🌱','新手模式','术语解释更多，基金猫会主动提醒']:state.experience==='some'?['🙂','进阶模式','保留关键提示，减少重复教学']:['😎','老基民模式','默认基金页，信息密度更高'];
+  const xp=Cat.EXPERIENCE[state.experience]||Cat.EXPERIENCE.new,profile=[xp.icon,xp.name,xp.note];
   const coachSection=state.experience==='pro'?'':`<div class="section-head"><h2>基金猫提醒</h2><span>${state.experience==='new'?'新手讲解已开启':'只保留关键提醒'}</span></div><div class="card cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div>`;
   const lessonSection=state.experience==='new'?`<div class="section-head"><h2>今日提示</h2><span>不是投资建议</span></div><div class="card"><div class="hint">${dailyLesson()}</div><div class="progress-line"><i style="width:${(state.day+1)/MAX_DAYS*100}%"></i></div><div class="hint" style="margin-top:8px">30日挑战：${state.day+1} / ${MAX_DAYS}</div></div>`:'';
   $('#page-home').innerHTML=`<div class="home-mission"><div class="mission-kicker">TODAY'S MISSION</div><div class="mission-title">${mission.title}</div><div class="mission-sub">${mission.sub}</div><div class="mission-pills"><span>${dateLabel(date)}</span><span>${STAGE_LABELS[state.stage]}</span><span>${news.sentiment}</span></div><div class="experience-badge">${profile[0]} ${profile[1]}</div></div>
@@ -683,7 +704,7 @@ function openEnding(){const e=state.ending;openModal(`<div style="text-align:cen
 function openModal(html,after){$('#modal').innerHTML=html;$('#modalWrap').classList.add('show');$('#modalWrap').setAttribute('aria-hidden','false');after?.()}
 function closeModal(){$('#modalWrap').classList.remove('show');$('#modalWrap').setAttribute('aria-hidden','true')}
 function setPage(page,scroll=true){state.currentPage=page;$$('.page').forEach(p=>p.classList.add('hidden'));$(`#page-${page}`).classList.remove('hidden');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===page));if(scroll)window.scrollTo({top:0,behavior:'smooth'});save()}
-function resetGame(){if(!confirm('重新开始会清空 V6.1 的持仓、订单和成就，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
+function resetGame(){if(!confirm('重新开始会清空 V7 的持仓、订单和成就，并从 DAY 1 开始，确定吗？'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
 
 function bindEvents(){
   document.addEventListener('click',e=>{
@@ -723,7 +744,7 @@ function bindEvents(){
   });
   $('#modalWrap').addEventListener('click',e=>{if(e.target===$('#modalWrap'))closeModal()});
   $('#feedbackClose').addEventListener('click',closeFeedback);$('#feedback').addEventListener('click',e=>{if(e.target===$('#feedback'))closeFeedback()});
-  $('#startBtn').addEventListener('click',()=>{state.started=true;applyExperience();state.currentPage=state.experience==='pro'?'market':'home';$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save();if(state.experience==='new')setTimeout(()=>showFeedback('🐱','基金猫上班啦！',['新手讲解已开启','看不懂的词可以点问号。','先用小额熟悉规则。'],false),260);else if(state.experience==='some')setTimeout(()=>toast('进阶模式：只保留关键提醒'),260)});
+  $('#startBtn').addEventListener('click',()=>{state.started=true;applyExperience();state.currentPage=state.experience==='pro'?'market':'home';$('#boot').classList.add('hidden');$('#app').classList.remove('hidden');if(!state.currentMarket)createMarketForDay();state.dayStartAsset=totalAsset();updateEstimates();renderAll();save();setTimeout(()=>showFeedback('🌅','DAY 1 · 第一天投资',Cat.dayOneLines(dateLabel(currentDate()),state.experience),false),260)});
   $('#bellBtn').addEventListener('click',()=>{state.bellClicks++;if(state.bellClicks>=7)unlock('moon')});
   $('#brandEaster').addEventListener('click',()=>{state.brandClicks++;if(state.brandClicks>=7){unlock('moon');renderAchievements();save()}});
   $('#clockBtn').addEventListener('click',()=>openModal(`<div class="modal-head"><div><h2>交易时钟</h2><p>${dateLabel(currentDate())} ${currentTime()}</p></div><button class="close" data-close>✕</button></div><div class="timeline"><div class="timeline-item"><i></i><div><b>15:00 前</b><p>按当日收盘净值定价，可在截止前撤单。</p></div></div><div class="timeline-item"><i></i><div><b>15:00 及以后</b><p>订单顺延到下一交易日，按下一交易日净值定价。</p></div></div><div class="timeline-item"><i></i><div><b>下一交易日</b><p>买入份额确认；赎回资金根据基金类型继续等待到账。</p></div></div></div><div class="hint">本游戏采用简化模拟。真实产品的确认时间、到账时间与费用以基金合同和销售平台规则为准。</div>`));
@@ -734,13 +755,10 @@ const _openFund=openFund;
 openFund=function(fid,mode='buy',preferredClass='A'){state.__modalFund=fid;_openFund(fid,mode,preferredClass)};
 
 load();
+const bootDate=$('#bootDate');if(bootDate)bootDate.textContent=`游戏从 ${dateLabel(currentDate())} 09:30 开始`;
 if(!state.currentMarket)createMarketForDay();
 updateEstimates();
 bindEvents();
 if(state.started){$('#boot').classList.add('hidden');$('#app').classList.remove('hidden')}else{$$('#experiencePick [data-experience]').forEach(x=>x.classList.toggle('active',x.dataset.experience===state.experience))}
 renderAll();
-})();
-
-</script>
-</body>
-</html>
+})();</script></body></html>
