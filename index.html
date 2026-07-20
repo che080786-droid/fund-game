@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark" data-experience="new"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" /><meta name="theme-color" content="#090b12" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /><title>今天回本了吗？V7.1 模块化版</title><style>:root{
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark" data-experience="new"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5" /><meta name="theme-color" content="#090b12" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /><title>今天回本了吗？V7.1.1 模块化版</title><style>:root{
   --bg:#080b12;--panel:#111624;--panel2:#171e2f;--panel3:#0d111c;
   --line:#283147;--text:#f5f7fb;--muted:#929cb3;--red:#ff6578;--green:#39d19a;
   --gold:#ffd36f;--blue:#78a9ff;--purple:#b98cff;--orange:#ff9a73;
@@ -66,12 +66,12 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
 .boot-date{margin:12px auto 2px;padding:9px 12px;border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;font-size:12px;color:var(--muted);background:var(--panel3)}
 .module-note{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
 
-/* V7.1 回撤信息 */
+/* V7.1.1 文案与收盘按钮修复 */
 .metric b{line-height:1.35}.metric-row .metric:nth-child(3) b,.metric-row .metric:nth-child(5) b{font-size:12px}.learn-chip{position:relative;z-index:2}
 </style></head><body><div id="boot" class="boot">
   <div class="boot-card">
     <button class="bell" id="bellBtn" aria-label="开盘铃">🔔</button>
-    <div class="boot-kicker">FUND LIFE SIMULATOR · V7.1</div>
+    <div class="boot-kicker">FUND LIFE SIMULATOR · V7.1.1</div>
     <h1>今天，能回本吗？</h1>
     <p>一套按照真实基金交易逻辑运转的模拟世界。<br>新闻会骗人，费用会偷吃收益，三点以后又是明天。</p>
     <div class="experience" id="experiencePick"><button data-experience="new" class="active"><span>🌱</span>完全不会</button><button data-experience="some"><span>🙂</span>知道一点</button><button data-experience="pro"><span>😎</span>老基民</button></div>
@@ -86,7 +86,7 @@ html[data-theme="light"] .bottom-nav{background:linear-gradient(transparent,rgba
   <header class="topbar">
     <div class="brand" id="brandEaster">
       <div class="brand-icon">📈</div>
-      <div><b>今天回本了吗？</b><small>模块化基金模拟器 · V7.1</small></div>
+      <div><b>今天回本了吗？</b><small>模块化基金模拟器 · V7.1.1</small></div>
     </div>
     <div class="top-actions"><button class="theme-toggle" id="themeBtn" aria-label="切换日夜模式">🌙</button><button class="clock-pill" id="clockBtn"><span id="dayLabel">DAY 1</span><b id="timeLabel">09:30</b></button></div>
   </header>
@@ -659,7 +659,7 @@ function renderHome(){
   const coachSection=state.experience==='pro'?'':`<div class="section-head"><h2>基金猫提醒</h2><span>${state.experience==='new'?'新手讲解已开启':'只保留关键提醒'}</span></div><div class="card cat-tip"><div class="cat-avatar">🐱</div><div class="cat-bubble">${catMessage()}</div></div>`;
   const lessonSection=state.experience==='new'?`<div class="section-head"><h2>今日提示</h2><span>不是投资建议</span></div><div class="card"><div class="hint">${dailyLesson()}</div><div class="progress-line"><i style="width:${(state.day+1)/MAX_DAYS*100}%"></i></div><div class="hint" style="margin-top:8px">30日挑战：${state.day+1} / ${MAX_DAYS}</div></div>`:'';
   $('#page-home').innerHTML=`<div class="home-mission"><div class="mission-kicker">TODAY'S MISSION</div><div class="mission-title">${mission.title}</div><div class="mission-sub">${mission.sub}</div><div class="mission-pills"><span>${dateLabel(date)}</span><span>${STAGE_LABELS[state.stage]}</span><span>${news.sentiment}</span></div><div class="experience-badge">${profile[0]} ${profile[1]}</div></div>
-  <div class="hero"><div class="eyebrow">账户总资产 · ${dateLabel(date)}</div><div class="hero-row"><div class="asset number-roll" data-roll="totalAsset" data-value="${totalAsset()}" data-format="money">${fmtMoney(totalAsset())}</div><div class="return ${cls(totalReturn())} number-roll" data-roll="totalReturn" data-value="${totalReturn()}" data-format="pct">${fmtPct(totalReturn())}</div></div><div class="hero-stats"><div class="mini"><span>可用现金</span><b class="number-roll" data-roll="cash" data-value="${state.cash}" data-format="money">${fmtMoney(state.cash)}</b></div><div class="mini"><span>持仓市值</span><b class="number-roll" data-roll="holdingsValue" data-value="${holdingsValue()}" data-format="money">${fmtMoney(holdingsValue())}</b></div><div class="mini"><span>当前心态</span><b>${mood()}</b></div></div><div class="market-clock"><div class="clock-orb">${state.stage<3?'🕒':'🌙'}</div><div><h3>${STAGE_LABELS[state.stage]}</h3><p>${clockHint()}</p></div><div class="clock-actions"><button class="advance" data-action="advance">${advanceLabel()}</button>${state.stage<4?'<button class="fast-close" data-action="fast-close">直接到收盘</button>':''}</div></div></div>
+  <div class="hero"><div class="eyebrow">账户总资产 · ${dateLabel(date)}</div><div class="hero-row"><div class="asset number-roll" data-roll="totalAsset" data-value="${totalAsset()}" data-format="money">${fmtMoney(totalAsset())}</div><div class="return ${cls(totalReturn())} number-roll" data-roll="totalReturn" data-value="${totalReturn()}" data-format="pct">${fmtPct(totalReturn())}</div></div><div class="hero-stats"><div class="mini"><span>可用现金</span><b class="number-roll" data-roll="cash" data-value="${state.cash}" data-format="money">${fmtMoney(state.cash)}</b></div><div class="mini"><span>持仓市值</span><b class="number-roll" data-roll="holdingsValue" data-value="${holdingsValue()}" data-format="money">${fmtMoney(holdingsValue())}</b></div><div class="mini"><span>当前心态</span><b>${mood()}</b></div></div><div class="market-clock"><div class="clock-orb">${state.stage<3?'🕒':'🌙'}</div><div><h3>${STAGE_LABELS[state.stage]}</h3><p>${clockHint()}</p></div><div class="clock-actions"><button class="advance" data-action="advance">${advanceLabel()}</button>${state.stage<3?'<button class="fast-close" data-action="fast-close">直接到收盘</button>':''}</div></div></div>
   <div class="news-card" data-action="open-news"><div class="news-top"><div class="tag">TODAY'S MARKET</div><div class="sentiment">${news.sentiment}</div></div><h3>${news.icon} ${news.title}</h3><p>${news.text}</p><div class="impact-pills">${Object.entries(news.impact||{}).slice(0,4).map(([k,v])=>`<span>${k} ${v>0?'偏利好':'偏利空'}</span>`).join('')||'<span>全市场情绪事件</span>'}</div></div>
   <div class="quick-actions"><button data-page="news"><span>📰</span>新闻中心</button><button data-page="achievements"><span>🏆</span>成就彩蛋</button><button data-action="show-trades"><span>🧾</span>交易记录</button>${state.experience==='new'?'<button data-action="learn"><span>🌱</span>基金入门</button>':'<button data-page="calendar"><span>📅</span>今日复盘</button>'}</div>
   <div class="profile-note">${profile[2]}</div><div class="section-head"><h2>${watch.length?'我的自选':'盘中热度'}</h2><button data-page="market">查看全部 →</button></div><div class="fund-list">${(watch.length?watch:top).map(fundRowHTML).join('')}</div>${coachSection}${lessonSection}`;
@@ -670,7 +670,7 @@ function clockHint(){
   if(state.stage===3)return '今日订单已锁定，不能撤销；净值正在计算。';
   return '今日净值已更新，可以查看盈亏日历与复盘。';
 }
-function advanceLabel(){return state.stage===4?(state.day>=MAX_DAYS-1?'查看结局':'下一交易日'):state.stage===2?'推进到15:00':state.stage===3?'更新净值':'推进时间'}
+function advanceLabel(){return state.stage===4?(state.day>=MAX_DAYS-1?'查看结局':'下一交易日'):state.stage===2?'推进到15:00':state.stage===3?'查看收盘复盘':'推进时间'}
 function dailyLesson(){
   const arr=['同一板块的不同基金，也会因为持仓、现金仓位和集中度而涨跌不同。','15:00 是场外基金订单归属交易日的重要分界线。','A/C 类不只看字母：申购费、销售服务费和持有期限赎回费阶梯要一起算。','消息利好不等于价格上涨，预期可能已经提前被交易。','真正的分散不是多买几个名字，而是减少同一风险来源。'];return arr[state.day%arr.length];
 }
@@ -724,7 +724,7 @@ function openFund(fid,mode='buy',preferredClass='A'){
   const f=fundById(fid);const nav=classNav(f,preferredClass),dd=drawdownAnalysis(f.historyA);const est=estimateForFund(f);const aFee=feeConfig(f,'A'),cFee=feeConfig(f,'C');
   openModal(`<div class="modal-head"><div><h2>${f.icon} ${f.name}</h2><p>${f.code} · ${f.sector} · ${f.manager}<br>${f.desc}</p></div><button class="close" data-close>✕</button></div>
   <div class="detail-chart">${chartSvg(f.historyA,f.accent)}</div>
-  <div class="metric-row" style="margin-top:10px"><div class="metric"><span>${state.currentMarket.closed?'今日涨跌':'盘中估算'}${state.beginnerMode?'<button class="learn-chip" data-term="estimate">?</button>':''}</span><b class="${cls(est)}">${fmtPct(est)}</b></div><div class="metric"><span>最大回撤${state.beginnerMode?'<button class="learn-chip" data-term="drawdown">?</button>':''}</span><b class="down">${fmtPct(dd.mdd)}</b></div><div class="metric"><span>回撤状态</span><b class="${dd.recovered?'flat':'down'}">${dd.status}</b></div><div class="metric"><span>最大回撤形成天数</span><b>${dd.drawdownDays} 个交易日</b></div><div class="metric"><span>${dd.recovered?'回撤修复用时':'已修复时间'}</span><b>${dd.recoveryDays} 个交易日${dd.recovered?'':' · 进行中'}</b></div><div class="metric"><span>当前距历史高点</span><b class="${cls(dd.currentDrawdown)}">${fmtPct(dd.currentDrawdown)}</b></div><div class="metric"><span>估值百分位${state.beginnerMode?'<button class="learn-chip" data-term="valuation">?</button>':''}</span><b>${f.valuation.toFixed(0)}%</b></div><div class="metric"><span>现金仓位</span><b>${(f.cashRatio*100).toFixed(0)}%</b></div></div>
+  <div class="metric-row" style="margin-top:10px"><div class="metric"><span>${state.currentMarket.closed?'今日涨跌':'盘中估算'}${state.beginnerMode?'<button class="learn-chip" data-term="estimate">?</button>':''}</span><b class="${cls(est)}">${fmtPct(est)}</b></div><div class="metric"><span>最大回撤${state.beginnerMode?'<button class="learn-chip" data-term="drawdown">?</button>':''}</span><b class="down">${fmtPct(dd.mdd)}</b></div><div class="metric"><span>回撤状态</span><b class="${dd.recovered?'flat':'down'}">${dd.status}</b></div><div class="metric"><span>最大回撤形成天数</span><b>${dd.drawdownDays} 个交易日</b></div><div class="metric"><span>${dd.recovered?'回撤修复用时':'距最低点已过去'}</span><b>${dd.recoveryDays} 个交易日${dd.recovered?'':' · 尚未修复'}</b></div><div class="metric"><span>当前距历史高点</span><b class="${cls(dd.currentDrawdown)}">${fmtPct(dd.currentDrawdown)}</b></div><div class="metric"><span>估值百分位${state.beginnerMode?'<button class="learn-chip" data-term="valuation">?</button>':''}</span><b>${f.valuation.toFixed(0)}%</b></div><div class="metric"><span>现金仓位</span><b>${(f.cashRatio*100).toFixed(0)}%</b></div></div>
   <div class="valuation"><span class="hint">历史估值</span><div class="thermo"><i style="left:${f.valuation}%"></i></div><b>${f.valuation<30?'偏低':f.valuation>75?'偏高':'中性'}</b></div>
   <div class="divider"></div><div class="hint">前四大模拟持仓：${f.holdings.map(x=>`${x.name} ${(x.weight*100).toFixed(0)}%`).join(' · ')}</div>
   <div class="tabs"><button class="${mode==='buy'?'active':''}" data-trade-mode="buy">买入</button><button class="${mode==='sell'?'active':''}" data-trade-mode="sell">卖出</button></div>
